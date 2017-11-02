@@ -3,6 +3,11 @@ class Pos{
     this.x = x;
     this.y = y;
   }
+
+  toJSON(){
+    let {x, y} = this;
+    return {x, y};
+  }
 }
 
 module.exports = Pos;

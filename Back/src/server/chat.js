@@ -19,32 +19,20 @@ const htmlEntities = (str) => {
                       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 };
 
-// Array with some colors
 let colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
 // ... in random order
 colors.sort(function(a,b) { return Math.random() > 0.5; } );
 
-/**
- * HTTP server
- */
-let server = http.createServer(function(request, response) {
-    // Not important for us. We're writing WebSocket server, not HTTP server
-});
+let server = http.createServer(function(request, response) {});
+
 server.listen(webSocketsServerPort, function() {
-    console.log((new Date()) + " Server is listening on port " + webSocketsServerPort);
+    console.log((new Date()) + " websocket Server is listening on port " + webSocketsServerPort);
 });
 
-/**
- * WebSocket server
- */
 let wsServer = new webSocketServer({
-    // WebSocket server is tied to a HTTP server. WebSocket request is just
-    // an enhanced HTTP request. For more info http://tools.ietf.org/html/rfc6455#page-6
     httpServer: server
 });
 
-// This callback function is called every time someone
-// tries to connect to the WebSocket server
 wsServer.on('request', function(request) {
     console.log((new Date()) + ' Connection from origin ' + request.origin + '.');
 
@@ -67,35 +55,37 @@ wsServer.on('request', function(request) {
     // user sent some message
     connection.on('message', function(message) {
         if (message.type === 'utf8') { // accept only text
-            if (userName === false) { // first message sent by user is their name
-                // remember user name
-                userName = htmlEntities(message.utf8Data);
-                // get random color and send it back to the user
-                userColor = colors.shift();
-                connection.sendUTF(JSON.stringify({ type:'color', data: userColor }));
-                console.log((new Date()) + ' User is known as: ' + userName
-                            + ' with ' + userColor + ' color.');
-
-            } else { // log and broadcast the message
-                console.log((new Date()) + ' Received Message from '
-                            + userName + ': ' + message.utf8Data);
-
-                // we want to keep history of all sent messages
-                let obj = {
-                    time: (new Date()).getTime(),
-                    text: htmlEntities(message.utf8Data),
-                    author: userName,
-                    color: userColor
-                };
-                history.push(obj);
-                history = history.slice(-100);
-
-                // broadcast message to all connected clients
-                let json = JSON.stringify({ type:'message', data: obj });
-                for (let i=0; i < clients.length; i++) {
-                    clients[i].sendUTF(json);
-                }
-            }
+            // if (userName === false) { // first message sent by user is their name
+            //     // remember user name
+            //     userName = htmlEntities(message.utf8Data);
+            //     // get random color and send it back to the user
+            //     userColor = colors.shift();
+            //     connection.sendUTF(JSON.stringify({ type:'color', data: userColor }));
+            //     console.log((new Date()) + ' User is known as: ' + userName
+            //                 + ' with ' + userColor + ' color.');
+            //
+            // } else { // log and broadcast the message
+            //     console.log((new Date()) + ' Received Message from '
+            //                 + userName + ': ' + message.utf8Data);
+            //
+            //     // we want to keep history of all sent messages
+            //     let obj = {
+            //         time: (new Date()).getTime(),
+            //         text: htmlEntities(message.utf8Data),
+            //         author: userName,
+            //         color: userColor
+            //     };
+            //     history.push(obj);
+            //     history = history.slice(-100);
+            //
+            //     // broadcast message to all connected clients
+            //     let json = JSON.stringify({ type:'message', data: obj });
+            //     for (let i=0; i < clients.length; i++) {
+            //         clients[i].sendUTF(json);
+            //     }
+            // }
+            let input = JSON.parse(message);
+            console.log(input); 
         }
     });
 
