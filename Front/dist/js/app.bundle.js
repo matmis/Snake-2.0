@@ -258,47 +258,9 @@ init();
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Transport = function () {
-  function Transport(model, data) {
-    _classCallCheck(this, Transport);
-
-    this.model = model;
-    this.data = data;
-  }
-
-  _createClass(Transport, null, [{
-    key: "SendString",
-    value: function SendString(model, data) {
-      //model = waarop we gaan fileteren
-      //data = inhoud van het model
-      var m = model,
-          d = data;
-      var ts = {
-        model: m,
-        data: d
-      };
-      return JSON.stringify(ts);
-      //console.log(ts);
-    }
-  }]);
-
-  return Transport;
-}();
-
-exports.default = Transport;
+throw new Error("Module build failed: SyntaxError: C:/Users/arnec/Google Drive/3NMCT - SEM5/Snake-2.0/Front/src/js/models/transport.class.js: Unexpected token (2:0)\n\n\u001b[0m \u001b[90m 1 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mdefault\u001b[39m \u001b[36mclass\u001b[39m \u001b[33mTransport\u001b[39m{\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 2 | \u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<<\u001b[39m\u001b[33m<\u001b[39m \u001b[33mHEAD\u001b[39m\n \u001b[90m   | \u001b[39m\u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 3 | \u001b[39m  constructor(model\u001b[33m,\u001b[39m data){\n \u001b[90m 4 | \u001b[39m    \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mmodel \u001b[33m=\u001b[39m model\u001b[33m;\u001b[39m\n \u001b[90m 5 | \u001b[39m    \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mdata \u001b[33m=\u001b[39m data\u001b[33m;\u001b[39m\u001b[0m\n");
 
 /***/ }),
 /* 3 */
