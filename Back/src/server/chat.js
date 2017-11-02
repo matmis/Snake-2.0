@@ -4,7 +4,6 @@ const config = require("./../config"),
     webSocketServer = require('websocket').server;
 
 let chatServer = ()=>{
-    // Port where we'll run the websocket server
 let webSocketsServerPort = config.CHAT_PORT;
 
 /**
@@ -15,13 +14,10 @@ let history = [ ];
 // list of currently connected clients (users)
 let clients = [ ];
 
-/**
- * Helper function for escaping input strings
- */
 const htmlEntities = (str) => {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;')
                       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
+};
 
 // Array with some colors
 let colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
@@ -55,7 +51,7 @@ wsServer.on('request', function(request) {
     // accept connection - you should check 'request.origin' to make sure that
     // client is connecting from your website
     // (http://en.wikipedia.org/wiki/Same_origin_policy)
-    let connection = request.accept(null, request.origin); 
+    let connection = request.accept(null, request.origin);
     // we need to know client index to remove them on 'close' event
     let index = clients.push(connection) - 1;
     let userName = false;
@@ -83,7 +79,7 @@ wsServer.on('request', function(request) {
             } else { // log and broadcast the message
                 console.log((new Date()) + ' Received Message from '
                             + userName + ': ' + message.utf8Data);
-                
+
                 // we want to keep history of all sent messages
                 let obj = {
                     time: (new Date()).getTime(),
@@ -117,7 +113,7 @@ wsServer.on('request', function(request) {
 
 });
 
-}
+};
 
 
 module.exports = chatServer;
