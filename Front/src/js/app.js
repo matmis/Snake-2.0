@@ -9,13 +9,42 @@ import Transport from "./models/transport.class";
 import Username from "./models/username.class";
 
 let btnSubmit, txtUser;
-let userName;
+let userName, connection;
 
 let content, input, status, myColor, myName;
 
 
 const init = ()=>{
+    fetchElements();
 
+    setupWebsockets();
+
+
+   
+
+
+};
+
+const setupWebsockets = ()=>{
+    window.WebSocket = window.WebSocket || window.MozWebSocket;
+    
+    connection = new WebSocket('ws://127.0.0.1:5001');
+
+    connection.onopen = ()=>{
+        console.log("Opened connection");
+    }
+
+    connection.onerror = ()=> {
+        console.log("Problems with connection...");
+    };
+
+    connection.onmessage = ()=>{
+        console.log(message);
+    }
+
+}
+
+const fetchElements = () =>{
     btnSubmit = document.querySelector("#btnSubmit");
     txtUser = document.querySelector("#txtUser");
 
@@ -28,12 +57,7 @@ const init = ()=>{
     input = document.querySelector("#input");
     status = document.querySelector("#status");
 
-
-    //console.log(btnSubmit);
-    //console.log(txtUser);
-
-
-};
+}
 
 const checkNickname = ()=>{
     let regex = new RegExp("^[a-zA-Z ]+$");
@@ -44,7 +68,12 @@ const checkNickname = ()=>{
     }
     else{
         console.log("wel goed");
-        userName = txtUser.value;
+
+
+        userName = new Username(txtUser.value);
+        let tr = new Transport("username", userName);
+        connection.send(JSON.stringify(tr));
+        
 
         startSpelletje();
     }
@@ -56,16 +85,9 @@ const startSpelletje = ()=>{
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
 
-    let u = new Username(userName);
-    let tr = new Transport("username", u);
-    console.log(tr);
+    
 
-    window.WebSocket = window.WebSocket || window.MozWebSocket;
-
-    let connection = new WebSocket('ws://127.0.0.1:5001');
-    connection.onopen = function () {
-       connection.send(JSON.stringify(tr));
-    };
+    //initChat();
 
 };
 
