@@ -57,13 +57,14 @@ const startSpelletje = ()=>{
     document.querySelector(".chat").style.visibility = "visible";
     
     let u = new Username(userName);
-    console.log(Transport.SendString("username", u));
+    let tr = new Transport("username", u);
+    console.log(tr);
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    let connection = new WebSocket('ws://127.0.0.1:5001');    
+    let connection = new WebSocket('ws://127.0.0.1:5001');
     connection.onopen = function () {
-       connection.send(u);
+       connection.send(JSON.stringify(tr));
     };
 
 }
