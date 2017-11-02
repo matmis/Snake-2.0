@@ -86,6 +86,10 @@ var _username = __webpack_require__(3);
 
 var _username2 = _interopRequireDefault(_username);
 
+var _Player = __webpack_require__(5);
+
+var _Player2 = _interopRequireDefault(_Player);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 console.log("app loaded");
@@ -102,6 +106,7 @@ var content = void 0,
     status = void 0,
     myColor = void 0,
     myName = void 0;
+var player = void 0;
 
 var init = function init() {
     fetchElements();
@@ -116,14 +121,28 @@ var setupWebsockets = function setupWebsockets() {
 
     connection.onopen = function () {
         console.log("Opened connection");
+        input.disabled = false;
     };
 
-    connection.onerror = function () {
+    connection.onerror = function (error) {
         console.log("Problems with connection...");
     };
 
     connection.onmessage = function (message) {
         console.log(message.data);
+        var msg = JSON.parse(message.data);
+        console.log(msg);
+        if (msg.type == "Player" && msg.data.name == txtUser.value) {
+            //console.log(msg.data.name)
+            player = msg.data;
+            //console.log(player);
+            status.innerHTML = player.name + ": ";
+        }
+
+        if (msg.type == "message") {
+            var dt = new Date(msg.data.time);
+            addMessage(msg.data.author, msg.data.text, "purple", dt);
+        }
     };
 };
 
@@ -137,7 +156,20 @@ var fetchElements = function fetchElements() {
     });
 
     content = document.querySelector("#content");
+
     input = document.querySelector("#input");
+    input.addEventListener("keydown", function (e) {
+        if (e.keyCode === 13) {
+            var msg = input.value;
+            if (!msg) {
+                return;
+            }
+            var tr = new _transport2.default("chat", msg);
+            connection.send(JSON.stringify(tr));
+            //console.log(JSON.stringify(tr));
+            input.value = "";
+        }
+    });
     status = document.querySelector("#status");
 };
 
@@ -162,96 +194,11 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
 
-    //initChat();
+    checkChat();
 };
 
-var initChat = function initChat() {
+var checkChat = function checkChat() {
 
-    myColor = false;
-    myName = false;
-
-    // if user is running mozilla then use it's built-in WebSocket
-    window.WebSocket = window.WebSocket || window.MozWebSocket;
-
-    if (!window.WebSocket) {
-        content.innerHTML("<p>Websockets are not supported</p>");
-        input.style.visibility = hidden;
-        status.style.visibility = hidden;
-        return;
-    }
-
-    // open connection
-    var connection = new WebSocket('ws://127.0.0.1:5001');
-
-    connection.onopen = function () {
-        // first we want users to enter their names
-        input.disabled = false;
-        status.innerHTML = "chose name:";
-    };
-
-    connection.onerror = function (error) {
-        // just in there were some problems with conenction...
-        content.innerHTML = "<p>Problems with connection</p>";
-    };
-
-    // most important part - incoming messages
-    connection.onmessage = function (message) {
-        // try to parse JSON message. Because we know that the server always returns
-        // JSON this should work without any problem but we should make sure that
-        // the massage is not chunked or otherwise damaged.
-        try {
-            var json = JSON.parse(message.data);
-        } catch (e) {
-            console.log('This doesn\'t look like a valid JSON: ', message.data);
-            return;
-        }
-
-        if (json.type === 'color') {
-            // first response from the server with user's color
-            myColor = json.data;
-            status.innerHTML = myName + ': ';
-            input.disabled = false;
-            input.focus();
-            // from now user can start sending messages
-        } else if (json.type === 'history') {
-            // entire message history
-            // insert every single message to the chat window
-            for (var i = 0; i < json.data.length; i++) {
-                addMessage(json.data[i].author, json.data[i].text, json.data[i].color, new Date(json.data[i].time));
-            }
-        } else if (json.type === 'message') {
-            // it's a single message
-            input.disabled; // let the user write another message
-            addMessage(json.data.author, json.data.text, json.data.color, new Date(json.data.time));
-        } else {
-            console.log('Hmm..., I\'ve never seen JSON like this: ', json);
-        }
-    };
-
-    /**
-     * Send mesage when user presses Enter key
-     */
-    input.addEventListener("keydown", function (e) {
-        if (e.keyCode === 13) {
-            var msg = input.value;
-            if (!msg) {
-                return;
-            }
-            // send the message as an ordinary text
-            connection.send(msg);
-            input.value = "";
-
-            // disable the input field to make the user wait until server
-            // sends back response
-            input.disabled = false;
-        }
-    });
-
-    /**
-     * This method is optional. If the server wasn't able to respond to the
-     * in 3 seconds then show some error message to notify the user that
-     * something is wrong.
-     */
     setInterval(function () {
         if (connection.readyState !== 1) {
             status.innerHTML = 'Error';
@@ -259,13 +206,11 @@ var initChat = function initChat() {
             input.value = "Unable to comminucate with the WebSocket server";
         }
     }, 3000);
+};
 
-    /**
-     * Add message to the chat window
-     */
-    function addMessage(author, message, color, dt) {
-        content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
-    }
+var addMessage = function addMessage(author, message, color, dt) {
+    content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
+    content.scrollTop = content.scrollHeight;
 };
 
 init();
@@ -340,6 +285,144 @@ exports.default = UserName;
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _Snake = __webpack_require__(6);
+
+var _Snake2 = _interopRequireDefault(_Snake);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Player = function Player(name, color) {
+  _classCallCheck(this, Player);
+
+  this.name = name;
+  this.snake = new _Snake2.default();
+  this.color = color;
+};
+
+exports.default = Player;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Pos = __webpack_require__(7);
+
+var _Pos2 = _interopRequireDefault(_Pos);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Snake = function () {
+  function Snake() {
+    _classCallCheck(this, Snake);
+
+    this.directions = {
+      UP: 0,
+      DOWN: 1,
+      LEFT: 2,
+      RIGHT: 3
+    };
+
+    this.location = [];
+
+    this.direction = this.directions.RIGHT;
+
+    this.location.push(new _Pos2.default(0, 0));
+    this.location.push(new _Pos2.default(-1, 0));
+    this.location.push(new _Pos2.default(-2, 0));
+    this.location.push(new _Pos2.default(-3, 0));
+  }
+
+  _createClass(Snake, [{
+    key: "GameTick",
+    value: function GameTick() {
+      var head = void 0;
+      switch (this.direction) {
+        case this.directions.UP:
+          head = new _Pos2.default(this.location[0].x, this.location[0].y + 1);
+          break;
+        case this.directions.DOWN:
+          head = new _Pos2.default(this.location[0].x, this.location[0].y - 1);
+          break;
+        case this.directions.LEFT:
+          head = new _Pos2.default(this.location[0].x - 1, this.location[0].y);
+          break;
+        case this.directions.RIGHT:
+          head = new _Pos2.default(this.location[0].x + 1, this.location[0].y);
+          break;
+        default:
+      }
+      this.location.splice(0, 0, head);
+      this.location.splice(this.location.length - 1, 1);
+    }
+  }]);
+
+  return Snake;
+}();
+
+exports.default = Snake;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Pos = function () {
+  function Pos(x, y) {
+    _classCallCheck(this, Pos);
+
+    this.x = x;
+    this.y = y;
+  }
+
+  _createClass(Pos, [{
+    key: "toJSON",
+    value: function toJSON() {
+      var x = this.x,
+          y = this.y;
+
+      return { x: x, y: y };
+    }
+  }]);
+
+  return Pos;
+}();
+
+exports.default = Pos;
 
 /***/ })
 /******/ ]);
