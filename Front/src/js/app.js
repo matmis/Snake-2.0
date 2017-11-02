@@ -5,6 +5,9 @@ console.log("app loaded");
 
 console.log("login loaded");
 
+import Transport from "./models/transport.class"
+import Username from "./models/username.class"
+
 let btnSubmit, txtUser;
 let userName;
 
@@ -21,9 +24,13 @@ const init = ()=>{
         checkNickname();
     });
 
+    content = document.querySelector("#content");
+    input = document.querySelector("#input");
+    status = document.querySelector("#status");
 
-    console.log(btnSubmit);
-    console.log(txtUser);
+
+    //console.log(btnSubmit);
+    //console.log(txtUser);
 
 
 }
@@ -38,6 +45,7 @@ const checkNickname = ()=>{
     else{
         console.log("wel goed");
         userName = txtUser.value;
+        
         startSpelletje()
     }
 }
@@ -48,125 +56,125 @@ const startSpelletje = ()=>{
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
     
-    initChat()
+    let u = new Username(userName);
+    console.log(Transport.SendString("username", u));
+
+    window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+    let connection = new WebSocket('ws://127.0.0.1:5001');    
+    
+    connectoin.send(u);
 
 }
 
 const initChat = ()=>{
-    content = document.querySelector("#content");
-    input = document.querySelector("#input");
-    status = document.querySelector("#status");
-
-    myColor = false;
-    myName = false;
-
+    
+    
+        myColor = false;
+        myName = false;
+    
         // if user is running mozilla then use it's built-in WebSocket
         window.WebSocket = window.WebSocket || window.MozWebSocket;
+        
+        if (!window.WebSocket) {
+            content.innerHTML("<p>Websockets are not supported</p>");
+            input.style.visibility = hidden;
+            status.style.visibility = hidden;
+            return;
+        }
     
-    if (!window.WebSocket) {
-        content.innerHTML("<p>Websockets are not supported</p>");
-        input.style.visibility = hidden;
-        status.style.visibility = hidden;
-        return;
-    }
-
-    // open connection
-    var connection = new WebSocket('ws://127.0.0.1:5001');
-    
-        connection.onopen = function () {
-            // first we want users to enter their names
-            input.disabled = false;
-            status.innerHTML = "chose name:";
-        };
-    
-        connection.onerror = function (error) {
-            // just in there were some problems with conenction...
-            content.html("<p>Problems with connection</p>");
-        };
-    
-        // most important part - incoming messages
-        connection.onmessage = function (message) {
-            // try to parse JSON message. Because we know that the server always returns
-            // JSON this should work without any problem but we should make sure that
-            // the massage is not chunked or otherwise damaged.
-            try {
-                var json = JSON.parse(message.data);
-            } catch (e) {
-                console.log('This doesn\'t look like a valid JSON: ', message.data);
-                return;
-            }
-    
-            // NOTE: if you're not sure about the JSON structure
-            // check the server source code above
-            if (json.type === 'color') { // first response from the server with user's color
-                myColor = json.data;
-                status.innerHTML = myName + ': ';
+        // open connection
+        let connection = new WebSocket('ws://127.0.0.1:5001');
+        
+            connection.onopen = function () {
+                // first we want users to enter their names
                 input.disabled = false;
-                input.focus();
-                // from now user can start sending messages
-            } else if (json.type === 'history') { // entire message history
-                // insert every single message to the chat window
-                for (var i=0; i < json.data.length; i++) {
-                    addMessage(json.data[i].author, json.data[i].text,
-                               json.data[i].color, new Date(json.data[i].time));
-                }
-            } else if (json.type === 'message') { // it's a single message
-                input.disabled; // let the user write another message
-                addMessage(json.data.author, json.data.text,
-                           json.data.color, new Date(json.data.time));
-            } else {
-                console.log('Hmm..., I\'ve never seen JSON like this: ', json);
-            }
-        };
-    
-        /**
-         * Send mesage when user presses Enter key
-         */
-        input.addEventListener("keydown", (e)=>{
-            if (e.keyCode === 13) {
-                var msg = input.value;
-                if (!msg) {
+                status.innerHTML = "chose name:";
+            };
+        
+            connection.onerror = function (error) {
+                // just in there were some problems with conenction...
+                content.innerHTML = ("<p>Problems with connection</p>");
+            };
+        
+            // most important part - incoming messages
+            connection.onmessage = function (message) {
+                // try to parse JSON message. Because we know that the server always returns
+                // JSON this should work without any problem but we should make sure that
+                // the massage is not chunked or otherwise damaged.
+                try {
+                    var json = JSON.parse(message.data);
+                } catch (e) {
+                    console.log('This doesn\'t look like a valid JSON: ', message.data);
                     return;
                 }
-                // send the message as an ordinary text
-                connection.send(msg);
-                input.value = "";
-                // disable the input field to make the user wait until server
-                // sends back response
-                input.disabled = false;
-    
-                // we know that the first message sent from a user their name
-                if (myName === false) {
-                    myName = msg;
+        
+                if (json.type === 'color') { // first response from the server with user's color
+                    myColor = json.data;
+                    status.innerHTML = myName + ': ';
+                    input.disabled = false;
+                    input.focus();
+                    // from now user can start sending messages
+                } else if (json.type === 'history') { // entire message history
+                    // insert every single message to the chat window
+                    for (var i=0; i < json.data.length; i++) {
+                        addMessage(json.data[i].author, json.data[i].text,
+                                   json.data[i].color, new Date(json.data[i].time));
+                    }
+                } else if (json.type === 'message') { // it's a single message
+                    input.disabled; // let the user write another message
+                    addMessage(json.data.author, json.data.text,
+                               json.data.color, new Date(json.data.time));
+                } else {
+                    console.log('Hmm..., I\'ve never seen JSON like this: ', json);
                 }
-            }
-        })
-
+            };
+        
+            /**
+             * Send mesage when user presses Enter key
+             */
+            input.addEventListener("keydown", (e)=>{
+                if (e.keyCode === 13) {
+                    var msg = input.value;
+                    if (!msg) {
+                        return;
+                    }
+                    // send the message as an ordinary text
+                    connection.send(msg);
+                    input.value = "";
+                    
+                    // disable the input field to make the user wait until server
+                    // sends back response
+                    input.disabled = false;
+        
+                }
+            })
     
-        /**
-         * This method is optional. If the server wasn't able to respond to the
-         * in 3 seconds then show some error message to notify the user that
-         * something is wrong.
-         */
-        setInterval(function() {
-            if (connection.readyState !== 1) {
-                status.innerHTML = ('Error');
-                input.disabled = true;
-                input.value = "Unable to comminucate with the WebSocket server";
-                                    
+        
+            /**
+             * This method is optional. If the server wasn't able to respond to the
+             * in 3 seconds then show some error message to notify the user that
+             * something is wrong.
+             */
+            setInterval(function() {
+                if (connection.readyState !== 1) {
+                    status.innerHTML = ('Error');
+                    input.disabled = true;
+                    input.value = "Unable to comminucate with the WebSocket server";
+                                        
+                }
+            }, 3000);
+        
+            /**
+             * Add message to the chat window
+             */
+            function addMessage(author, message, color, dt) {
+                content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' +
+                     + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
+                     + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
+                     + ': ' + message + '</p>');
             }
-        }, 3000);
     
-        /**
-         * Add message to the chat window
-         */
-        function addMessage(author, message, color, dt) {
-            content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' +
-                 + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
-                 + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
-                 + ': ' + message + '</p>');
-        }
-
-}
+    }
 
 init();
