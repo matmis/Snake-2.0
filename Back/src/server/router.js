@@ -24,8 +24,8 @@ let router = (() => {
     }
     let extension = path.extname(path.basename(req.url));
 
-    if(req.method == "get"){
-      req.url = _staticFolder + "/" + req.url;
+    if(req.method == "GET"){
+      req.url = _staticFolder + "\\" + req.url;
       RequestHandlers.getFile(req.url, (error, rs) => {
         cb(null, rs, extensions[extension]);
       });

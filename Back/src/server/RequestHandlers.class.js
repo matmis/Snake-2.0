@@ -2,7 +2,7 @@ const fs = require("fs"),
       path = require("path"),
       config = require("../config");
 
-export default class RequestHandlers{
+class RequestHandlers{
 
   constructor(){
 
@@ -18,3 +18,5 @@ export default class RequestHandlers{
     });
   }
 }
+
+module.exports = RequestHandlers;
