@@ -68,7 +68,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(1);
-module.exports = __webpack_require__(2);
+module.exports = __webpack_require__(4);
 
 
 /***/ }),
@@ -78,11 +78,11 @@ module.exports = __webpack_require__(2);
 "use strict";
 
 
-var _transport = __webpack_require__(3);
+var _transport = __webpack_require__(2);
 
 var _transport2 = _interopRequireDefault(_transport);
 
-var _username = __webpack_require__(4);
+var _username = __webpack_require__(3);
 
 var _username2 = _interopRequireDefault(_username);
 
@@ -140,13 +140,14 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".chat").style.visibility = "visible";
 
     var u = new _username2.default(userName);
-    console.log(_transport2.default.SendString("username", u));
+    var tr = new _transport2.default("username", u);
+    console.log(tr);
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
     var connection = new WebSocket('ws://127.0.0.1:5001');
     connection.onopen = function () {
-        connection.send(u);
+        connection.send(JSON.stringify(tr));
     };
 };
 
@@ -257,12 +258,6 @@ init();
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -277,8 +272,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Transport = function () {
-  function Transport() {
+  function Transport(model, data) {
     _classCallCheck(this, Transport);
+
+    this.model = model;
+    this.data = data;
   }
 
   _createClass(Transport, null, [{
@@ -303,7 +301,7 @@ var Transport = function () {
 exports.default = Transport;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -322,6 +320,12 @@ var UserName = function UserName(username) {
 };
 
 exports.default = UserName;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

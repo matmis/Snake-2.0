@@ -84,8 +84,11 @@ wsServer.on('request', function(request) {
             //         clients[i].sendUTF(json);
             //     }
             // }
-            let input = JSON.parse(message);
-            console.log(input);
+            console.log(message.utf8Data);
+            let input = JSON.parse(message.utf8Data);
+            if(input.model == "username"){
+              console.log(input.data.username);
+            }
         }
     });
 

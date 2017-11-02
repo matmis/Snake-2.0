@@ -10,5 +10,3 @@ const hostname = config.HOSTNAME,
 staticServer.init(hostname, port);
 
 chatServer();
-// let u = new UserName("Yann");
-// console.log(Transport.SendString("username", u));

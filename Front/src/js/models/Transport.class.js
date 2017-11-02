@@ -1,8 +1,9 @@
 export default class Transport{
-    constructor(){
-  
+    constructor(model, data){
+      this.model = model;
+      this.data = data;
     }
-  
+
     static SendString(model, data){
       //model = waarop we gaan fileteren
       //data = inhoud van het model
@@ -15,4 +16,3 @@ export default class Transport{
       //console.log(ts);
     }
 }
-  

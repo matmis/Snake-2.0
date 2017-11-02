@@ -5,8 +5,8 @@ console.log("app loaded");
 
 console.log("login loaded");
 
-import Transport from "./models/transport.class"
-import Username from "./models/username.class"
+import Transport from "./models/transport.class";
+import Username from "./models/username.class";
 
 let btnSubmit, txtUser;
 let userName;
@@ -33,7 +33,7 @@ const init = ()=>{
     //console.log(txtUser);
 
 
-}
+};
 
 const checkNickname = ()=>{
     let regex = new RegExp("^[a-zA-Z ]+$");
@@ -45,59 +45,60 @@ const checkNickname = ()=>{
     else{
         console.log("wel goed");
         userName = txtUser.value;
-        
-        startSpelletje()
+
+        startSpelletje();
     }
-}
+};
 
 
 const startSpelletje = ()=>{
     console.log("start");
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
-    
+
     let u = new Username(userName);
-    console.log(Transport.SendString("username", u));
+    let tr = new Transport("username", u);
+    console.log(tr);
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    let connection = new WebSocket('ws://127.0.0.1:5001');    
+    let connection = new WebSocket('ws://127.0.0.1:5001');
     connection.onopen = function () {
-       connection.send(u);
+       connection.send(JSON.stringify(tr));
     };
 
-}
+};
 
 const initChat = ()=>{
-    
-    
+
+
         myColor = false;
         myName = false;
-    
+
         // if user is running mozilla then use it's built-in WebSocket
         window.WebSocket = window.WebSocket || window.MozWebSocket;
-        
+
         if (!window.WebSocket) {
             content.innerHTML("<p>Websockets are not supported</p>");
             input.style.visibility = hidden;
             status.style.visibility = hidden;
             return;
         }
-    
+
         // open connection
         let connection = new WebSocket('ws://127.0.0.1:5001');
-        
+
             connection.onopen = function () {
                 // first we want users to enter their names
                 input.disabled = false;
                 status.innerHTML = "chose name:";
             };
-        
+
             connection.onerror = function (error) {
                 // just in there were some problems with conenction...
                 content.innerHTML = ("<p>Problems with connection</p>");
             };
-        
+
             // most important part - incoming messages
             connection.onmessage = function (message) {
                 // try to parse JSON message. Because we know that the server always returns
@@ -109,7 +110,7 @@ const initChat = ()=>{
                     console.log('This doesn\'t look like a valid JSON: ', message.data);
                     return;
                 }
-        
+
                 if (json.type === 'color') { // first response from the server with user's color
                     myColor = json.data;
                     status.innerHTML = myName + ': ';
@@ -130,7 +131,7 @@ const initChat = ()=>{
                     console.log('Hmm..., I\'ve never seen JSON like this: ', json);
                 }
             };
-        
+
             /**
              * Send mesage when user presses Enter key
              */
@@ -143,15 +144,15 @@ const initChat = ()=>{
                     // send the message as an ordinary text
                     connection.send(msg);
                     input.value = "";
-                    
+
                     // disable the input field to make the user wait until server
                     // sends back response
                     input.disabled = false;
-        
+
                 }
             })
-    
-        
+
+
             /**
              * This method is optional. If the server wasn't able to respond to the
              * in 3 seconds then show some error message to notify the user that
@@ -162,10 +163,10 @@ const initChat = ()=>{
                     status.innerHTML = ('Error');
                     input.disabled = true;
                     input.value = "Unable to comminucate with the WebSocket server";
-                                        
+
                 }
             }, 3000);
-        
+
             /**
              * Add message to the chat window
              */
@@ -175,7 +176,7 @@ const initChat = ()=>{
                      + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
                      + ': ' + message + '</p>');
             }
-    
+
     }
 
 init();
