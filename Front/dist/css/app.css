@@ -1,5 +1,5 @@
 body {
-  background-color: darkblue; }
+  background-color: darkgreen; }
 
 .login-screen {
   display: flex;
@@ -13,3 +13,11 @@ body {
     display: flex;
     justify-content: center;
     flex-flow: column; }
+    .login-screen .login h1 {
+      font-size: 4rem; }
+    .login-screen .login #txtUser {
+      margin: 15px; }
+    .login-screen .login #cboServer {
+      margin: 15px; }
+    .login-screen .login #btnSubmit {
+      margin: 15px; }

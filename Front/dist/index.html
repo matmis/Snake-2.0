@@ -4,14 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
+    <title>Snake</title>
     <link href="css/app.css" rel="stylesheet">
     <script src="js/app.bundle.js" defer></script>
 </head>
-<body class="login-screen">
+<body>
+    <div class="login-screen">
     <div class="login">
-        <input type="text" name="txtUser" id="txtUser" />
+        <h1>Snake 2.0</h1>
+        <input type="text" name="txtUser" id="txtUser" placeholder="Nickname..."/>
+        <select id="cboServer" name="cboServer">
+            <option value="1">Server 1</option>
+            <option value="2">Server 2</option>
+            <option value="3">Server 3</option>
+
+        </select>
         <button name="btnSubmit" id="btnSubmit" value="Start">Start</button>
     </div>
+    </div>  
 </body>
 </html>
