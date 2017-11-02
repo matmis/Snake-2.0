@@ -78,6 +78,16 @@ module.exports = __webpack_require__(2);
 "use strict";
 
 
+var _transport = __webpack_require__(3);
+
+var _transport2 = _interopRequireDefault(_transport);
+
+var _username = __webpack_require__(4);
+
+var _username2 = _interopRequireDefault(_username);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 console.log("app loaded");
 
 console.log("login loaded");
@@ -102,8 +112,13 @@ var init = function init() {
         checkNickname();
     });
 
-    console.log(btnSubmit);
-    console.log(txtUser);
+    content = document.querySelector("#content");
+    input = document.querySelector("#input");
+    status = document.querySelector("#status");
+
+    //console.log(btnSubmit);
+    //console.log(txtUser);
+
 };
 
 var checkNickname = function checkNickname() {
@@ -114,6 +129,7 @@ var checkNickname = function checkNickname() {
     } else {
         console.log("wel goed");
         userName = txtUser.value;
+
         startSpelletje();
     }
 };
@@ -123,13 +139,17 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
 
-    initChat();
+    var u = new _username2.default(userName);
+    console.log(_transport2.default.SendString("username", u));
+
+    window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+    var connection = new WebSocket('ws://127.0.0.1:5001');
+
+    connectoin.send(u);
 };
 
 var initChat = function initChat() {
-    content = document.querySelector("#content");
-    input = document.querySelector("#input");
-    status = document.querySelector("#status");
 
     myColor = false;
     myName = false;
@@ -155,7 +175,7 @@ var initChat = function initChat() {
 
     connection.onerror = function (error) {
         // just in there were some problems with conenction...
-        content.html("<p>Problems with connection</p>");
+        content.innerHTML = "<p>Problems with connection</p>";
     };
 
     // most important part - incoming messages
@@ -170,8 +190,6 @@ var initChat = function initChat() {
             return;
         }
 
-        // NOTE: if you're not sure about the JSON structure
-        // check the server source code above
         if (json.type === 'color') {
             // first response from the server with user's color
             myColor = json.data;
@@ -206,14 +224,10 @@ var initChat = function initChat() {
             // send the message as an ordinary text
             connection.send(msg);
             input.value = "";
+
             // disable the input field to make the user wait until server
             // sends back response
             input.disabled = false;
-
-            // we know that the first message sent from a user their name
-            if (myName === false) {
-                myName = msg;
-            }
         }
     });
 
@@ -245,6 +259,68 @@ init();
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Transport = function () {
+  function Transport() {
+    _classCallCheck(this, Transport);
+  }
+
+  _createClass(Transport, null, [{
+    key: "SendString",
+    value: function SendString(model, data) {
+      //model = waarop we gaan fileteren
+      //data = inhoud van het model
+      var m = model,
+          d = data;
+      var ts = {
+        model: m,
+        data: d
+      };
+      return JSON.stringify(ts);
+      //console.log(ts);
+    }
+  }]);
+
+  return Transport;
+}();
+
+exports.default = Transport;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UserName = function UserName(username) {
+  _classCallCheck(this, UserName);
+
+  this.username = username;
+};
+
+exports.default = UserName;
 
 /***/ })
 /******/ ]);
