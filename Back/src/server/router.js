@@ -26,7 +26,8 @@ let router = (() => {
 
     if(req.method == "GET"){
       req.url = _staticFolder + "\\" + req.url;
-      RequestHandlers.getFile(req.url, (error, rs) => {
+      console.log(req.url);
+        RequestHandlers.getFile(req.url, (error, rs) => {
         cb(null, rs, extensions[extension]);
       });
     }else{
