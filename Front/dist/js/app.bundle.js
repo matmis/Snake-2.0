@@ -122,8 +122,8 @@ var setupWebsockets = function setupWebsockets() {
         console.log("Problems with connection...");
     };
 
-    connection.onmessage = function () {
-        console.log(message);
+    connection.onmessage = function (message) {
+        console.log(message.data);
     };
 };
 

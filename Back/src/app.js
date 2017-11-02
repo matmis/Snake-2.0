@@ -1,8 +1,7 @@
 const config = require("./config"),
       staticServer = require("./server/staticServer"),
       chatServer = require("./server/chat"),
-      Transport = require("./models/Transport.class"),
-      UserName = require("./models/UserName.class");
+      Player = require("./models/Player.class");
 
 const hostname = config.HOSTNAME,
       port = config.PORT;
@@ -10,3 +9,6 @@ const hostname = config.HOSTNAME,
 staticServer.init(hostname, port);
 
 chatServer();
+
+// let p = new Player("Yann", "#FF0000");
+// console.log(JSON.stringify(p));
