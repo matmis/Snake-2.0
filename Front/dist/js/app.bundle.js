@@ -115,6 +115,7 @@ var checkNickname = function checkNickname() {
 var startSpelletje = function startSpelletje() {
     console.log("start");
     document.querySelector(".login-screen").style.visibility = "hidden";
+    document.querySelector(".chat").style.visibility = "visible";
 };
 
 init();
