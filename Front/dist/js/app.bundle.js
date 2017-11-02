@@ -78,7 +78,46 @@ module.exports = __webpack_require__(2);
 "use strict";
 
 
-console.log("loaded");
+console.log("app loaded");
+
+console.log("login loaded");
+
+var btnSubmit = void 0,
+    txtUser = void 0;
+var userName = void 0;
+
+var init = function init() {
+
+    btnSubmit = document.querySelector("#btnSubmit");
+    txtUser = document.querySelector("#txtUser");
+
+    btnSubmit.addEventListener("click", function () {
+        console.log("clicked");
+        checkNickname();
+    });
+
+    console.log(btnSubmit);
+    console.log(txtUser);
+};
+
+var checkNickname = function checkNickname() {
+    var regex = new RegExp("^[a-zA-Z ]+$");
+
+    if (!regex.test(txtUser.value)) {
+        console.log("Niet goed");
+    } else {
+        console.log("wel goed");
+        userName = txtUser.value;
+        startSpelletje();
+    }
+};
+
+var startSpelletje = function startSpelletje() {
+    console.log("start");
+    document.querySelector(".login-screen").style.visibility = "hidden";
+};
+
+init();
 
 /***/ }),
 /* 2 */
