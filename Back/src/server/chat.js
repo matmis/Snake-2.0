@@ -85,7 +85,7 @@ wsServer.on('request', function(request) {
             //     }
             // }
             let input = JSON.parse(message);
-            console.log(input); 
+            console.log(input);
         }
     });
 
