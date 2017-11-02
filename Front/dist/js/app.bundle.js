@@ -145,8 +145,9 @@ var startSpelletje = function startSpelletje() {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
     var connection = new WebSocket('ws://127.0.0.1:5001');
-
-    connection.send(u);
+    connection.onopen = function () {
+        connection.send(u);
+    };
 };
 
 var initChat = function initChat() {
