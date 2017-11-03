@@ -8,15 +8,23 @@ class Game{
 
   AddPlayer(player){
     this.players.push(player);
+    this.Start();
   }
 
   Start(){
-    this.play = true;
+    if(!this.play && this.players.length >= 2){
+      this.play = true;
+      console.log("Start Game");
+    }
   }
 
   Stop(){
     this.play = false;
   }
+
+  Tick(){
+    
+  }
 }
 
-module.Exports = Game;
+module.exports = Game;

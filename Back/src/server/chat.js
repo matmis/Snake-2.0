@@ -2,7 +2,7 @@
 const config = require("./../config"),
     http = require('http'),
     webSocketServer = require('websocket').server,
-    c = require("./../models/Colors.class"),
+    Colors = require("./../models/Colors.class"),
     Player = require("./../models/Player.class"),
     Game = require("./../models/Game.class");
 
@@ -10,7 +10,9 @@ let chatServer = () => {
   let webSocketServerPort = config.CHAT_PORT,
       chatHistory = [],
       clients = [],
-      server = http.createServer((request, response) => {});
+      server = http.createServer((request, response) => {}),
+      c = new Colors(),
+      game = new Game();
 
   server.listen(webSocketServerPort, () => {
     console.log((new Date()) + " websocket Server is listening on port " + webSocketServerPort);
@@ -21,14 +23,11 @@ let chatServer = () => {
   });
 
   wsServer.on("request", (request) => {
-    console.log((new Date()) + ' Connection from origin ' + request.origin + '.');
 
     let connection = request.accept(null, request.origin),
         index = clients.push(connection) - 1,
         userName = false,
         userColor = false;
-
-    console.log((new Date()) + ' Connection accepted.');
 
     if(chatHistory.length > 0){
       send(connection, "history", chatHistory);
@@ -47,7 +46,7 @@ let chatServer = () => {
     });
 
     connection.on('close', (connection) => {
-      console.log((new Date()) + " Peer " + connection.remoteAddress + " disconnected.");
+      BroadCastChat(userName, userColor, userName + " has left the room");
       clients.splice(index, 1);
     });
   });
@@ -72,10 +71,13 @@ let chatServer = () => {
     for (var j = 0; j < clients.length; j++) {
       send(clients[j], "Player", p);
     }
+    game.AddPlayer(p);
   };
 
   const BroadCastChat = (userName, userColor, data) => {
     let msg = CreateChatMsg(userName, userColor, data);
+    chatHistory.push(msg);
+    chatHistory = chatHistory.splice(-100);
     for (var i = 0; i < clients.length; i++) {
       send(clients[i], "message", msg);
     }

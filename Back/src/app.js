@@ -1,7 +1,8 @@
 const config = require("./config"),
       staticServer = require("./server/staticServer"),
       chatServer = require("./server/chat"),
-      Player = require("./models/Player.class");
+      Player = require("./models/Player.class"),
+      Game = require("./models/Game.class");
 
 const hostname = config.HOSTNAME,
       port = config.PORT;
