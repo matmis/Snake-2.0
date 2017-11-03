@@ -4,7 +4,7 @@ class Game{
   constructor(){
     this.players = [];
     this.play = false;
-    this.tickTime = 2000;
+    this.tickTime = 5000;
     this.clients = [];
   }
 
@@ -38,12 +38,37 @@ class Game{
     let tick = setInterval(() => {
       if(this.play){
         console.log("update");
-        this.BroadCastUpdate();
+        this.UpdateSnakes().then((ok) => {
+          this.BroadCastUpdate();
+        });
       }else{
         console.log("end");
         clearInterval(tick);
       }
     }, this.tickTime);
+  }
+
+  UpdateSnakes(){
+    return new Promise((ok, nok) => {
+      let c = 0;
+      for (var i = 0; i < this.players.length; i++) {
+        this.UpdateSnake(i).then(
+          (result) => {
+            c++;
+            if(c == this.players.length){
+              ok();
+            }
+          }
+        );
+      }
+    });
+  }
+
+  UpdateSnake(i){
+    return new Promise((ok, nok) => {
+      this.players[i].snake.GameTick();
+      ok();
+    });
   }
 
   BroadCastUpdate(){

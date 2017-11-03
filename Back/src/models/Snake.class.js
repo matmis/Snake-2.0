@@ -13,10 +13,10 @@ class Snake{
 
     this.direction = this.directions.RIGHT;
 
+    this.location.push(new Pos(3,0));
+    this.location.push(new Pos(2,0));
+    this.location.push(new Pos(1,0));
     this.location.push(new Pos(0,0));
-    this.location.push(new Pos(-1,0));
-    this.location.push(new Pos(-2,0));
-    this.location.push(new Pos(-3,0));
   }
 
   GameTick(){
