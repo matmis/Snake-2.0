@@ -68,7 +68,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(1);
-module.exports = __webpack_require__(4);
+module.exports = __webpack_require__(7);
 
 
 /***/ }),
@@ -86,15 +86,11 @@ var _username = __webpack_require__(3);
 
 var _username2 = _interopRequireDefault(_username);
 
-var _Player = __webpack_require__(5);
+var _Player = __webpack_require__(4);
 
 var _Player2 = _interopRequireDefault(_Player);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-console.log("app loaded");
-
-console.log("login loaded");
 
 var btnSubmit = void 0,
     txtUser = void 0;
@@ -107,6 +103,7 @@ var content = void 0,
     myColor = void 0,
     myName = void 0;
 var player = void 0;
+var gameCanvas = void 0;
 
 var init = function init() {
     fetchElements();
@@ -120,7 +117,7 @@ var setupWebsockets = function setupWebsockets() {
     connection = new WebSocket('ws://127.0.0.1:5001');
 
     connection.onopen = function () {
-        console.log("Opened connection");
+        //console.log("Opened connection");
         input.disabled = false;
     };
 
@@ -141,9 +138,35 @@ var setupWebsockets = function setupWebsockets() {
 
         if (msg.type == "message") {
             var dt = new Date(msg.data.time);
-            addMessage(msg.data.author, msg.data.text, "purple", dt);
+            addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+        }
+
+        if (msg.type == "update") {
+            var players = msg.data;
+            console.log(players);
+            drawSnakes();
         }
     };
+};
+
+var drawSnakes = function drawSnakes() {
+    var ctx = gameCanvas.getContext("2d");
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+    ctx.beginPath();
+
+    ctx.arc(10, 10, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 11, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 12, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 13, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 14, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 15, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 16, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 17, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 18, 1, 0, 2 * Math.PI);
+    ctx.arc(10, 19, 1, 0, 2 * Math.PI);
+
+    ctx.stroke();
 };
 
 var fetchElements = function fetchElements() {
@@ -171,6 +194,8 @@ var fetchElements = function fetchElements() {
         }
     });
     status = document.querySelector("#status");
+
+    gameCanvas = document.querySelector("#theGame");
 };
 
 var checkNickname = function checkNickname() {
@@ -193,12 +218,12 @@ var startSpelletje = function startSpelletje() {
     console.log("start");
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
+    document.querySelector(".game").style.visibility = "visible";
 
     checkChat();
 };
 
 var checkChat = function checkChat() {
-
     setInterval(function () {
         if (connection.readyState !== 1) {
             status.innerHTML = 'Error';
@@ -282,12 +307,6 @@ exports.default = UserName;
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -297,7 +316,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Snake = __webpack_require__(6);
+var _Snake = __webpack_require__(5);
 
 var _Snake2 = _interopRequireDefault(_Snake);
 
@@ -316,7 +335,7 @@ var Player = function Player(name, color) {
 exports.default = Player;
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -328,7 +347,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Pos = __webpack_require__(7);
+var _Pos = __webpack_require__(6);
 
 var _Pos2 = _interopRequireDefault(_Pos);
 
@@ -387,7 +406,7 @@ var Snake = function () {
 exports.default = Snake;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -423,6 +442,12 @@ var Pos = function () {
 }();
 
 exports.default = Pos;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

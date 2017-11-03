@@ -1,6 +1,8 @@
 body{
     background-color: darkgreen;
-}
+    overflow:hidden;
+
+    display: flex;
 
 .login-screen{
     display:flex;
@@ -39,6 +41,7 @@ body{
 }
 
 .chat{
+   
     #content { 
         padding:5px; 
         background:#ddd; 
@@ -47,20 +50,35 @@ body{
         border:1px solid #CCC; 
         margin-top:10px; 
         height: 500px;
-        width: 25%;
+        width: 100%;
     }
-    #input { 
+    #message{
+
+        display:flex;
+        #input { 
         border-radius:2px; 
         border:1px solid #ccc;
         margin-top:10px; 
         padding:5px; 
-        width:calc(25% - 88px);  
+        width: 100%;
+  
     }
+
     #status { 
-        width:88px; 
+        min-width: 25%;
         display:block; 
-        float:left; 
         margin-top:15px; 
+    }  
+    }
+
+}
+
+.game{
+    #theGame{
+        width: 1000px;
+        height: 750px;
+        border: 5px solid black;
+        margin: 15px 15px 15px 25px;
     }
 }
 
@@ -68,3 +86,4 @@ body{
 
 
 
+}
