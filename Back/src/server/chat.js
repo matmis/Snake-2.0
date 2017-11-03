@@ -39,6 +39,7 @@ let chatServer = () => {
         userName = htmlEntities(input.data.username);
         userColor = c.red;
         NewUserName(userName, userColor, input.data);
+        game.Start();
       }
       if(input.model == "chat"){
         BroadCastChat(userName, userColor, input.data);
@@ -48,6 +49,8 @@ let chatServer = () => {
     connection.on('close', (connection) => {
       BroadCastChat(userName, userColor, userName + " has left the room");
       clients.splice(index, 1);
+      game.removePlayer(userName);
+      game.Stop();
     });
   });
 
@@ -71,6 +74,7 @@ let chatServer = () => {
     for (var j = 0; j < clients.length; j++) {
       send(clients[j], "Player", p);
     }
+    game.clients = clients;
     game.AddPlayer(p);
   };
 
