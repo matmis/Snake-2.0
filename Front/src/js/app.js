@@ -54,7 +54,7 @@ const setupWebsockets = ()=>{
         {
             let players = msg.data;
             console.log(players);
-            drawSnakes();
+            drawSnakes(players);
         }
 
 
@@ -62,32 +62,32 @@ const setupWebsockets = ()=>{
 
 }
 
-const drawSnakes = () =>{
+const drawSnakes = (players) =>{
     let ctx = gameCanvas.getContext("2d");
     ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
 
     ctx.beginPath();
+    for(let i=0; i<players.length; i++){
+        let color = players[i].color;
+        let snake = players[i].snake.location;
+        ctx.fillStyle = color;
+        for(let y = 0; y< snake.length; y++){
+            ctx.arc(snake[y].x,snake[y].y, 1,0,2*Math.PI);
 
-    ctx.arc(10,10,1,0,2*Math.PI);
-    ctx.arc(10,11,1,0,2*Math.PI);
-    ctx.arc(10,12,1,0,2*Math.PI);
-    ctx.arc(10,13,1,0,2*Math.PI);
-    ctx.arc(10,14,1,0,2*Math.PI);
-    ctx.arc(10,15,1,0,2*Math.PI);
-    ctx.arc(10,16,1,0,2*Math.PI);
-    ctx.arc(10,17,1,0,2*Math.PI);
-    ctx.arc(10,18,1,0,2*Math.PI);
-    ctx.arc(10,19,1,0,2*Math.PI);
+            console.log("y: " + y);            
+        }
+        ctx.fill();
 
+    }
 
-    ctx.stroke();
+    
 
 }
 
 const fetchElements = () =>{
     btnSubmit = document.querySelector("#btnSubmit");
     txtUser = document.querySelector("#txtUser");
-
+    txtUser.focus();
     btnSubmit.addEventListener("click", ()=>{
         console.log("clicked");
         checkNickname();
@@ -96,7 +96,12 @@ const fetchElements = () =>{
     content = document.querySelector("#content");
  
     input = document.querySelector("#input");
-    input.addEventListener("keydown", (e)=>{
+    status = document.querySelector("#status");
+
+    gameCanvas = document.querySelector("#theGame");
+
+    window.addEventListener("keydown", (e)=>{
+        //console.log(e.keyCode);
         if (e.keyCode === 13) {
             var msg = input.value;
                 if (!msg) {
@@ -107,10 +112,19 @@ const fetchElements = () =>{
             //console.log(JSON.stringify(tr));
             input.value = "";
         }
+        else if(e.keyCode === 37){
+            console.log("left");
+        }
+        else if(e.keyCode === 38){
+            console.log("up");
+        }
+        else if(e.keyCode === 39){
+            console.log("right");
+        }
+        else if(e.keyCode === 40){
+            console.log("down");
+        }
     });
-    status = document.querySelector("#status");
-
-    gameCanvas = document.querySelector("#theGame");
 
 }
 
@@ -141,10 +155,22 @@ const startSpelletje = ()=>{
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
 
-
+    input.focus();
+    initCanvas();
     checkChat();
 
 };
+
+const initCanvas = ()=>{
+    let ctx = gameCanvas.getContext("2d");
+    ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
+    ctx.fillStyle = "#000";
+    ctx.font = "1em Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText("Waiting on other players...", gameCanvas.width /2, gameCanvas.height /2);
+}
 
 const checkChat = ()=>{
             setInterval(()=> {

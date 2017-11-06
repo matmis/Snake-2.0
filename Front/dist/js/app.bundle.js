@@ -144,35 +144,33 @@ var setupWebsockets = function setupWebsockets() {
         if (msg.type == "update") {
             var players = msg.data;
             console.log(players);
-            drawSnakes();
+            drawSnakes(players);
         }
     };
 };
 
-var drawSnakes = function drawSnakes() {
+var drawSnakes = function drawSnakes(players) {
     var ctx = gameCanvas.getContext("2d");
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     ctx.beginPath();
+    for (var i = 0; i < players.length; i++) {
+        var color = players[i].color;
+        var snake = players[i].snake.location;
+        ctx.fillStyle = color;
+        for (var y = 0; y < snake.length; y++) {
+            ctx.arc(snake[y].x, snake[y].y, 1, 0, 2 * Math.PI);
 
-    ctx.arc(10, 10, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 11, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 12, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 13, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 14, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 15, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 16, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 17, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 18, 1, 0, 2 * Math.PI);
-    ctx.arc(10, 19, 1, 0, 2 * Math.PI);
-
-    ctx.stroke();
+            console.log("y: " + y);
+        }
+        ctx.fill();
+    }
 };
 
 var fetchElements = function fetchElements() {
     btnSubmit = document.querySelector("#btnSubmit");
     txtUser = document.querySelector("#txtUser");
-
+    txtUser.focus();
     btnSubmit.addEventListener("click", function () {
         console.log("clicked");
         checkNickname();
@@ -181,7 +179,12 @@ var fetchElements = function fetchElements() {
     content = document.querySelector("#content");
 
     input = document.querySelector("#input");
-    input.addEventListener("keydown", function (e) {
+    status = document.querySelector("#status");
+
+    gameCanvas = document.querySelector("#theGame");
+
+    window.addEventListener("keydown", function (e) {
+        //console.log(e.keyCode);
         if (e.keyCode === 13) {
             var msg = input.value;
             if (!msg) {
@@ -191,11 +194,16 @@ var fetchElements = function fetchElements() {
             connection.send(JSON.stringify(tr));
             //console.log(JSON.stringify(tr));
             input.value = "";
+        } else if (e.keyCode === 37) {
+            console.log("left");
+        } else if (e.keyCode === 38) {
+            console.log("up");
+        } else if (e.keyCode === 39) {
+            console.log("right");
+        } else if (e.keyCode === 40) {
+            console.log("down");
         }
     });
-    status = document.querySelector("#status");
-
-    gameCanvas = document.querySelector("#theGame");
 };
 
 var checkNickname = function checkNickname() {
@@ -220,7 +228,20 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
 
+    input.focus();
+    initCanvas();
     checkChat();
+};
+
+var initCanvas = function initCanvas() {
+    var ctx = gameCanvas.getContext("2d");
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    ctx.fillStyle = "#000";
+    ctx.font = "1em Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText("Waiting on other players...", gameCanvas.width / 2, gameCanvas.height / 2);
 };
 
 var checkChat = function checkChat() {
