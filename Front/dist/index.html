@@ -9,20 +9,23 @@
     <script src="js/app.bundle.js" defer></script>
 </head>
 <body>
-    <div class="login-screen">
+    
+    <div class="login-screen" style="visibility: visible">
     <div class="login">
-        <h1>Snake 2.0</h1>
+        <h1>Snake <span>2.0</span></h1>
         <input type="text" name="txtUser" id="txtUser" placeholder="Enter your nickname..."/>
+        <!--
         <select id="cboServer" name="cboServer">
             <option value="1">Server 1</option>
             <option value="2">Server 2</option>
             <option value="3">Server 3</option>
 
         </select>
+    -->
         <button name="btnSubmit" id="btnSubmit" value="Start">Start</button>
     </div>
     </div>  
-    
+
     <div class="chat" style="visibility: hidden">
         <div id="content"></div>
         <div id="message">
@@ -33,5 +36,7 @@
     <div class="game" style="visibility: hidden">
         <canvas id="theGame"/>
     </div>
+
 </body>
+
 </html>

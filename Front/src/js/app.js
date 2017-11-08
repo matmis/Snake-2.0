@@ -33,7 +33,7 @@ const setupWebsockets = ()=>{
     };
 
     connection.onmessage = (message)=>{
-        console.log(message.data);
+        //console.log(message.data);
         let msg = JSON.parse(message.data);
         console.log(msg);
         if(msg.type == "Player" && msg.data.name == txtUser.value)
@@ -56,7 +56,10 @@ const setupWebsockets = ()=>{
             console.log(players);
             drawSnakes(players);
         }
-
+        if(msg.type == "end")
+        {
+            initCanvas("Game over...")
+        }
 
     }
 
@@ -65,8 +68,6 @@ const setupWebsockets = ()=>{
 const drawSnakes = (players) =>{
     let ctx = gameCanvas.getContext("2d");
     ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
-
-    ctx.beginPath();
     for(let i=0; i<players.length; i++){
         let color = players[i].color;
         let snake = players[i].snake.location;
@@ -76,14 +77,17 @@ const drawSnakes = (players) =>{
             let drawX, drawY;
             drawX = (snake[y].x * factor) + factor/2;
             drawY = (snake[y].y * factor) + factor/2;
+            ctx.beginPath();
             ctx.arc(drawX,drawY, factor/2,0,2*Math.PI);
+            ctx.fill();
+            ctx.closePath();
             //console.log("drawX: " + drawX);
             //console.log("drawY: ", drawY);
             //console.log("y: " + y);            
         }
-        ctx.fill();
 
     }
+
 
     
 
@@ -110,6 +114,12 @@ const fetchElements = () =>{
         if (e.keyCode === 13) {
             console.log("enter");
             
+            if(document.querySelector(".login-screen").style.visibility == "visible"){
+                console.log("test");
+                checkNickname();
+                return;
+            }
+
             var msg = input.value;
             if (!msg) {
                     return;
@@ -174,12 +184,12 @@ const startSpelletje = ()=>{
     document.querySelector(".game").style.visibility = "visible";
 
     input.focus();
-    initCanvas();
+    initCanvas("Waiting on other players...");
     checkChat();
 
 };
 
-const initCanvas = ()=>{
+const initCanvas = (str)=>{
     let ctx = gameCanvas.getContext("2d");
     ctx.canvas.width = gameCanvas.clientWidth;
     ctx.canvas.height = gameCanvas.clientHeight;
@@ -189,7 +199,7 @@ const initCanvas = ()=>{
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.fillText("Waiting on other players...", gameCanvas.width /2, gameCanvas.height /2);
+    ctx.fillText(str, gameCanvas.width /2, gameCanvas.height /2);
 }
 
 const checkChat = ()=>{

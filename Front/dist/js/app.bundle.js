@@ -126,7 +126,7 @@ var setupWebsockets = function setupWebsockets() {
     };
 
     connection.onmessage = function (message) {
-        console.log(message.data);
+        //console.log(message.data);
         var msg = JSON.parse(message.data);
         console.log(msg);
         if (msg.type == "Player" && msg.data.name == txtUser.value) {
@@ -146,14 +146,15 @@ var setupWebsockets = function setupWebsockets() {
             console.log(players);
             drawSnakes(players);
         }
+        if (msg.type == "end") {
+            initCanvas("Game over...");
+        }
     };
 };
 
 var drawSnakes = function drawSnakes(players) {
     var ctx = gameCanvas.getContext("2d");
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-    ctx.beginPath();
     for (var i = 0; i < players.length; i++) {
         var color = players[i].color;
         var snake = players[i].snake.location;
@@ -164,12 +165,14 @@ var drawSnakes = function drawSnakes(players) {
                 drawY = void 0;
             drawX = snake[y].x * factor + factor / 2;
             drawY = snake[y].y * factor + factor / 2;
+            ctx.beginPath();
             ctx.arc(drawX, drawY, factor / 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
             //console.log("drawX: " + drawX);
             //console.log("drawY: ", drawY);
             //console.log("y: " + y);            
         }
-        ctx.fill();
     }
 };
 
@@ -193,6 +196,12 @@ var fetchElements = function fetchElements() {
         //console.log(e.keyCode);
         if (e.keyCode === 13) {
             console.log("enter");
+
+            if (document.querySelector(".login-screen").style.visibility == "visible") {
+                console.log("test");
+                checkNickname();
+                return;
+            }
 
             var msg = input.value;
             if (!msg) {
@@ -247,11 +256,11 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".game").style.visibility = "visible";
 
     input.focus();
-    initCanvas();
+    initCanvas("Waiting on other players...");
     checkChat();
 };
 
-var initCanvas = function initCanvas() {
+var initCanvas = function initCanvas(str) {
     var ctx = gameCanvas.getContext("2d");
     ctx.canvas.width = gameCanvas.clientWidth;
     ctx.canvas.height = gameCanvas.clientHeight;
@@ -261,7 +270,7 @@ var initCanvas = function initCanvas() {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.fillText("Waiting on other players...", gameCanvas.width / 2, gameCanvas.height / 2);
+    ctx.fillText(str, gameCanvas.width / 2, gameCanvas.height / 2);
 };
 
 var checkChat = function checkChat() {
