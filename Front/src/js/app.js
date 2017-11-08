@@ -108,35 +108,38 @@ const fetchElements = () =>{
     window.addEventListener("keydown", (e)=>{
         //console.log(e.keyCode);
         if (e.keyCode === 13) {
+            console.log("enter");
             
             var msg = input.value;
-                if (!msg) {
+            if (!msg) {
                     return;
-                }
+            }else{
             let tr = new Transport("chat", msg);
             connection.send(JSON.stringify(tr));
             //console.log(JSON.stringify(tr));
             input.value = "";
+            }
         }
         else if(e.keyCode === 37){
             console.log("left");
-            let tr = new Transport("direction", "LEFT");
+            let tr = new Transport("direction", 2);
             connection.send(JSON.stringify(tr));
+            //console.log(JSON.stringify(tr));
         }
         else if(e.keyCode === 38){
             console.log("up");
-            let tr = new Transport("direction", "UP");
+            let tr = new Transport("direction", 0);
             connection.send(JSON.stringify(tr));
 
         }
         else if(e.keyCode === 39){
             console.log("right");
-            let tr = new Transport("direction", "RIGHT");
+            let tr = new Transport("direction", 3);
             connection.send(JSON.stringify(tr));
         }
         else if(e.keyCode === 40){
             console.log("down");
-            let tr = new Transport("direction", "DOWN");
+            let tr = new Transport("direction", 1);
             connection.send(JSON.stringify(tr));
         }
     });

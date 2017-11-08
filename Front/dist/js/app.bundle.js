@@ -192,30 +192,33 @@ var fetchElements = function fetchElements() {
     window.addEventListener("keydown", function (e) {
         //console.log(e.keyCode);
         if (e.keyCode === 13) {
+            console.log("enter");
 
             var msg = input.value;
             if (!msg) {
                 return;
+            } else {
+                var tr = new _transport2.default("chat", msg);
+                connection.send(JSON.stringify(tr));
+                //console.log(JSON.stringify(tr));
+                input.value = "";
             }
-            var tr = new _transport2.default("chat", msg);
-            connection.send(JSON.stringify(tr));
-            //console.log(JSON.stringify(tr));
-            input.value = "";
         } else if (e.keyCode === 37) {
             console.log("left");
-            var _tr = new _transport2.default("direction", "LEFT");
+            var _tr = new _transport2.default("direction", 2);
             connection.send(JSON.stringify(_tr));
+            //console.log(JSON.stringify(tr));
         } else if (e.keyCode === 38) {
             console.log("up");
-            var _tr2 = new _transport2.default("direction", "UP");
+            var _tr2 = new _transport2.default("direction", 0);
             connection.send(JSON.stringify(_tr2));
         } else if (e.keyCode === 39) {
             console.log("right");
-            var _tr3 = new _transport2.default("direction", "RIGHT");
+            var _tr3 = new _transport2.default("direction", 3);
             connection.send(JSON.stringify(_tr3));
         } else if (e.keyCode === 40) {
             console.log("down");
-            var _tr4 = new _transport2.default("direction", "DOWN");
+            var _tr4 = new _transport2.default("direction", 1);
             connection.send(JSON.stringify(_tr4));
         }
     });
