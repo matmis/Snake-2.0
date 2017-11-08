@@ -4,7 +4,7 @@ class Game{
   constructor(){
     this.players = [];
     this.play = false;
-    this.tickTime = 5000;
+    this.tickTime = 1000;
     this.clients = [];
   }
 

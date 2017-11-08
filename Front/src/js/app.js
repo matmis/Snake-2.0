@@ -64,6 +64,8 @@ const setupWebsockets = ()=>{
 
 const drawSnakes = (players) =>{
     let ctx = gameCanvas.getContext("2d");
+    //ctx.canvas.width = 1000;
+    //ctx.canvas.height = 750;
     ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
 
     ctx.beginPath();
@@ -72,8 +74,12 @@ const drawSnakes = (players) =>{
         let snake = players[i].snake.location;
         ctx.fillStyle = color;
         for(let y = 0; y< snake.length; y++){
-            ctx.arc(snake[y].x,snake[y].y, 1,0,2*Math.PI);
-
+            let drawX, drawY;
+            drawX = (snake[y].x * 10) + 5;
+            drawY = snake[y].y + 5;
+            ctx.arc(drawX,drawY, 5,0,2*Math.PI);
+            //console.log("drawX: " + drawX);
+            //console.log("drawY: ", drawY);
             console.log("y: " + y);            
         }
         ctx.fill();
@@ -163,9 +169,11 @@ const startSpelletje = ()=>{
 
 const initCanvas = ()=>{
     let ctx = gameCanvas.getContext("2d");
+    ctx.canvas.width = 1000;
+    ctx.canvas.height = 750;
     ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
     ctx.fillStyle = "#000";
-    ctx.font = "1em Arial";
+    ctx.font = "2em Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
