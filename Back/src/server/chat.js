@@ -44,6 +44,9 @@ let chatServer = () => {
       if(input.model == "chat"){
         BroadCastChat(userName, userColor, input.data);
       }
+      if(input.model == "direction"){
+        game.updatePlayerDirection(userName, input.data);
+      }
     });
 
     connection.on('close', (connection) => {

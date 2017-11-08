@@ -23,10 +23,10 @@ class Snake{
     let head;
     switch (this.direction) {
       case this.directions.UP:
-        head = new Pos(this.location[0].x, this.location[0].y + 1);
+        head = new Pos(this.location[0].x, this.location[0].y - 1);
         break;
       case this.directions.DOWN:
-        head = new Pos(this.location[0].x, this.location[0].y - 1);
+        head = new Pos(this.location[0].x, this.location[0].y + 1);
         break;
       case this.directions.LEFT:
         head = new Pos(this.location[0].x - 1, this.location[0].y);

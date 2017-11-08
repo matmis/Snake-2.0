@@ -4,7 +4,7 @@ class Game{
   constructor(){
     this.players = [];
     this.play = false;
-    this.tickTime = 100;
+    this.tickTime = 2000;
     this.clients = [];
     this.max = 100;
   }
@@ -19,6 +19,12 @@ class Game{
     let i = this.players.indexOf(p);
     this.players.splice(i,1);
     console.log(this.players);
+  }
+
+  updatePlayerDirection(name, direction){
+    let p = this.players.find(obj => obj.name == name);
+    let i = this.players.indexOf(p);
+    this.players[i].snake.direction = direction;
   }
 
   Start(){
@@ -39,14 +45,15 @@ class Game{
     let tick = setInterval(() => {
       if(this.play){
         console.log("update");
-        this.UpdateSnakes().then((ok) => {
-          console.log("snakes updated");
-          this.CheckSnakes().then((ok) => {
-            console.log("snakes checked");
-            this.BroadCastUpdate();
-            this.checkAmountOfPlayers();
+        this.UpdateSnakes().then(
+          (ok) => {
+            console.log("snakes updated");
+            this.CheckSnakes().then((ok) => {
+              console.log("snakes checked");
+              this.BroadCastUpdate();
+              this.checkAmountOfPlayers();
+            });
           });
-        });
       }else{
         console.log("end");
         clearInterval(tick);
@@ -69,6 +76,7 @@ class Game{
         console.log("checking: " + player.name);
         for (var j = 0; j < player.snake.location.length; j++) {
           let loc = player.snake.location[j];
+          console.log(player.snake);
           if(loc.x >= 0 && loc.x <= 100 && loc.y >= 0 && loc.y <= 100){
 
           }else{
@@ -79,14 +87,12 @@ class Game{
           }
         }
       }
-      console.log("remove indexes: " + removeIndexes);
       let removed = 0;
       for (var k = 0; k < removeIndexes.length; k++) {
         this.players[removeIndexes[k] - removed].isAlive = false;
         this.BroadCastDeath(this.players[removeIndexes[k] - removed]);
         this.players.splice(removeIndexes[k] - removed,1);
         removed++;
-        console.log(this.players);
       }
       ok();
     });
