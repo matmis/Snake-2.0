@@ -27,7 +27,7 @@ class Game{
     let p = this.players.find(obj => obj.name == name);
     if(p != null){
       let i = this.players.indexOf(p);
-      this.players[i].snake.direction = direction;  
+      this.players[i].snake.direction = direction;
     }
   }
 
@@ -60,6 +60,7 @@ class Game{
           });
       }else{
         console.log("end");
+        this.BroadCastEnd();
         clearInterval(tick);
       }
     }, this.tickTime);
@@ -130,6 +131,12 @@ class Game{
       this.clients[i].sendUTF(JSON.stringify({type: "death", data: player}));
       let msg = this.CreateChatMsg("Server", "#FF0000", player.name + " has died in action");
       this.clients[i].sendUTF(JSON.stringify({type: "message", data: msg}));
+    }
+  }
+
+  BroadCastEnd(){
+    for (var i = 0; i < this.clients.length; i++) {
+      this.clients[i].sendUTF(JSON.stringify({type: "end", data: "true"}));
     }
   }
 
