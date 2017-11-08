@@ -4,8 +4,9 @@ class Game{
   constructor(){
     this.players = [];
     this.play = false;
-    this.tickTime = 1000;
+    this.tickTime = 100;
     this.clients = [];
+    this.max = 100;
   }
 
   AddPlayer(player){
@@ -39,13 +40,56 @@ class Game{
       if(this.play){
         console.log("update");
         this.UpdateSnakes().then((ok) => {
-          this.BroadCastUpdate();
+          console.log("snakes updated");
+          this.CheckSnakes().then((ok) => {
+            console.log("snakes checked");
+            this.BroadCastUpdate();
+            this.checkAmountOfPlayers();
+          });
         });
       }else{
         console.log("end");
         clearInterval(tick);
       }
     }, this.tickTime);
+  }
+
+  checkAmountOfPlayers(){
+    if(this.players.length < 2){
+      this.play = false;
+    }
+  }
+
+  CheckSnakes(){
+    return new Promise((ok, nok) => {
+      let c = 0;
+      let removeIndexes = [];
+      for (var i = 0; i < this.players.length; i++) {
+        let player = this.players[i];
+        console.log("checking: " + player.name);
+        for (var j = 0; j < player.snake.location.length; j++) {
+          let loc = player.snake.location[j];
+          if(loc.x >= 0 && loc.x <= 100 && loc.y >= 0 && loc.y <= 100){
+
+          }else{
+            removeIndexes.push(i);
+            // this.players[i].isAlive = false;
+            // this.BroadCastDeath(this.players[i]);
+            // this.players.splice(i,1);
+          }
+        }
+      }
+      console.log("remove indexes: " + removeIndexes);
+      let removed = 0;
+      for (var k = 0; k < removeIndexes.length; k++) {
+        this.players[removeIndexes[k] - removed].isAlive = false;
+        this.BroadCastDeath(this.players[removeIndexes[k] - removed]);
+        this.players.splice(removeIndexes[k] - removed,1);
+        removed++;
+        console.log(this.players);
+      }
+      ok();
+    });
   }
 
   UpdateSnakes(){
@@ -69,6 +113,12 @@ class Game{
       this.players[i].snake.GameTick();
       ok();
     });
+  }
+
+  BroadCastDeath(player){
+    for (var i = 0; i < this.clients.length; i++) {
+      this.clients[i].sendUTF(JSON.stringify({type: "death", data: player}));
+    }
   }
 
   BroadCastUpdate(){
