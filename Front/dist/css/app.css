@@ -1,7 +1,8 @@
 @import url(https://fonts.googleapis.com/css?family=Niconne);html body {
   overflow: hidden;
   background-color: #161c22;
-  display: flex; }
+  display: flex;
+  align-items: flex-end; }
   html body .login-screen {
     display: flex;
     justify-content: center;
@@ -43,6 +44,13 @@
         font-size: 1em;
         background: darkgreen;
         outline: none; }
+  html body .chat h1 {
+    font-family: 'Niconne', cursive;
+    font-size: 4rem;
+    color: darkgreen;
+    height: 100%; }
+    html body .chat h1 span {
+      color: darkorange; }
   html body .chat #content {
     padding: 5px;
     background: #101010;
@@ -84,4 +92,4 @@
     height: 750px;
     border: 5px solid white;
     background-color: black;
-    margin: 15px 15px 15px 25px; }
+    margin: 15px 15px 0px 25px; }
