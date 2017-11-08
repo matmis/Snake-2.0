@@ -265,7 +265,7 @@ var initCanvas = function initCanvas(str) {
     ctx.canvas.width = gameCanvas.clientWidth;
     ctx.canvas.height = gameCanvas.clientHeight;
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#FFF";
     ctx.font = "2em Arial";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
