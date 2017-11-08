@@ -25,8 +25,10 @@ class Game{
 
   updatePlayerDirection(name, direction){
     let p = this.players.find(obj => obj.name == name);
-    let i = this.players.indexOf(p);
-    this.players[i].snake.direction = direction;
+    if(p != null){
+      let i = this.players.indexOf(p);
+      this.players[i].snake.direction = direction;  
+    }
   }
 
   Start(){
