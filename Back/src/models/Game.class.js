@@ -4,7 +4,7 @@ class Game{
   constructor(){
     this.players = [];
     this.play = false;
-    this.tickTime = 2000;
+    this.tickTime = 750;
     this.clients = [];
     this.max = 100;
   }
@@ -16,9 +16,11 @@ class Game{
 
   removePlayer(name){
     let p = this.players.find(obj => obj.name == name);
-    let i = this.players.indexOf(p);
-    this.players.splice(i,1);
-    console.log(this.players);
+    if(p != null){
+      let i = this.players.indexOf(p);
+      this.players.splice(i,1);
+      console.log(this.players);
+    }
   }
 
   updatePlayerDirection(name, direction){
@@ -124,7 +126,19 @@ class Game{
   BroadCastDeath(player){
     for (var i = 0; i < this.clients.length; i++) {
       this.clients[i].sendUTF(JSON.stringify({type: "death", data: player}));
+      let msg = this.CreateChatMsg("Server", "#FF0000", player.name + " has died in action");
+      this.clients[i].sendUTF(JSON.stringify({type: "message", data: msg}));
     }
+  }
+
+  CreateChatMsg(userName, userColor, data){
+    let msg = {
+      time: (new Date()).getTime(),
+      text: data,
+      author: userName,
+      color: userColor
+    };
+    return msg;
   }
 
   BroadCastUpdate(){
