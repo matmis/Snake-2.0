@@ -1,5 +1,6 @@
 const Player = require("./Player.Class");
 
+//main game
 class Game{
   constructor(){
     this.players = [];
