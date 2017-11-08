@@ -64,23 +64,22 @@ const setupWebsockets = ()=>{
 
 const drawSnakes = (players) =>{
     let ctx = gameCanvas.getContext("2d");
-    //ctx.canvas.width = 1000;
-    //ctx.canvas.height = 750;
     ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
 
     ctx.beginPath();
     for(let i=0; i<players.length; i++){
         let color = players[i].color;
         let snake = players[i].snake.location;
+        let factor = gameCanvas.clientWidth / 100;
         ctx.fillStyle = color;
         for(let y = 0; y< snake.length; y++){
             let drawX, drawY;
-            drawX = (snake[y].x * 10) + 5;
-            drawY = snake[y].y + 5;
-            ctx.arc(drawX,drawY, 5,0,2*Math.PI);
+            drawX = (snake[y].x * factor) + factor/2;
+            drawY = (snake[y].y * factor) + factor/2;
+            ctx.arc(drawX,drawY, factor/2,0,2*Math.PI);
             //console.log("drawX: " + drawX);
             //console.log("drawY: ", drawY);
-            console.log("y: " + y);            
+            //console.log("y: " + y);            
         }
         ctx.fill();
 
@@ -109,6 +108,7 @@ const fetchElements = () =>{
     window.addEventListener("keydown", (e)=>{
         //console.log(e.keyCode);
         if (e.keyCode === 13) {
+            
             var msg = input.value;
                 if (!msg) {
                     return;
@@ -120,15 +120,24 @@ const fetchElements = () =>{
         }
         else if(e.keyCode === 37){
             console.log("left");
+            let tr = new Transport("direction", "LEFT");
+            connection.send(JSON.stringify(tr));
         }
         else if(e.keyCode === 38){
             console.log("up");
+            let tr = new Transport("direction", "UP");
+            connection.send(JSON.stringify(tr));
+
         }
         else if(e.keyCode === 39){
             console.log("right");
+            let tr = new Transport("direction", "RIGHT");
+            connection.send(JSON.stringify(tr));
         }
         else if(e.keyCode === 40){
             console.log("down");
+            let tr = new Transport("direction", "DOWN");
+            connection.send(JSON.stringify(tr));
         }
     });
 
@@ -169,8 +178,8 @@ const startSpelletje = ()=>{
 
 const initCanvas = ()=>{
     let ctx = gameCanvas.getContext("2d");
-    ctx.canvas.width = 1000;
-    ctx.canvas.height = 750;
+    ctx.canvas.width = gameCanvas.clientWidth;
+    ctx.canvas.height = gameCanvas.clientHeight;
     ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
     ctx.fillStyle = "#000";
     ctx.font = "2em Arial";

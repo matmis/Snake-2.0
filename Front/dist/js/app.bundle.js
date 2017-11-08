@@ -151,24 +151,23 @@ var setupWebsockets = function setupWebsockets() {
 
 var drawSnakes = function drawSnakes(players) {
     var ctx = gameCanvas.getContext("2d");
-    //ctx.canvas.width = 1000;
-    //ctx.canvas.height = 750;
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 
     ctx.beginPath();
     for (var i = 0; i < players.length; i++) {
         var color = players[i].color;
         var snake = players[i].snake.location;
+        var factor = gameCanvas.clientWidth / 100;
         ctx.fillStyle = color;
         for (var y = 0; y < snake.length; y++) {
             var drawX = void 0,
                 drawY = void 0;
-            drawX = snake[y].x * 10 + 5;
-            drawY = snake[y].y + 5;
-            ctx.arc(drawX, drawY, 5, 0, 2 * Math.PI);
+            drawX = snake[y].x * factor + factor / 2;
+            drawY = snake[y].y * factor + factor / 2;
+            ctx.arc(drawX, drawY, factor / 2, 0, 2 * Math.PI);
             //console.log("drawX: " + drawX);
             //console.log("drawY: ", drawY);
-            console.log("y: " + y);
+            //console.log("y: " + y);            
         }
         ctx.fill();
     }
@@ -193,6 +192,7 @@ var fetchElements = function fetchElements() {
     window.addEventListener("keydown", function (e) {
         //console.log(e.keyCode);
         if (e.keyCode === 13) {
+
             var msg = input.value;
             if (!msg) {
                 return;
@@ -203,12 +203,20 @@ var fetchElements = function fetchElements() {
             input.value = "";
         } else if (e.keyCode === 37) {
             console.log("left");
+            var _tr = new _transport2.default("direction", "LEFT");
+            connection.send(JSON.stringify(_tr));
         } else if (e.keyCode === 38) {
             console.log("up");
+            var _tr2 = new _transport2.default("direction", "UP");
+            connection.send(JSON.stringify(_tr2));
         } else if (e.keyCode === 39) {
             console.log("right");
+            var _tr3 = new _transport2.default("direction", "RIGHT");
+            connection.send(JSON.stringify(_tr3));
         } else if (e.keyCode === 40) {
             console.log("down");
+            var _tr4 = new _transport2.default("direction", "DOWN");
+            connection.send(JSON.stringify(_tr4));
         }
     });
 };
@@ -242,8 +250,8 @@ var startSpelletje = function startSpelletje() {
 
 var initCanvas = function initCanvas() {
     var ctx = gameCanvas.getContext("2d");
-    ctx.canvas.width = 1000;
-    ctx.canvas.height = 750;
+    ctx.canvas.width = gameCanvas.clientWidth;
+    ctx.canvas.height = gameCanvas.clientHeight;
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
     ctx.fillStyle = "#000";
     ctx.font = "2em Arial";

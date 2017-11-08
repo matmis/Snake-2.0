@@ -1,5 +1,7 @@
 body {
-  background-color: darkgreen;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   overflow: hidden;
   display: flex; }
   body .login-screen {
@@ -8,14 +10,17 @@ body {
     align-items: center;
     width: 100%;
     height: 100%;
+    margin-left: -10px;
     position: absolute;
-    overflow: hidden; }
+    overflow: hidden;
+    background-image: radial-gradient(circle at 0% 0%, #373b52, #252736 51%, #1d1e26); }
     body .login-screen .login {
       display: flex;
       justify-content: center;
       flex-flow: column; }
       body .login-screen .login h1 {
-        font-size: 4rem; }
+        font-size: 4rem;
+        color: #f5f6ff; }
       body .login-screen .login #txtUser {
         margin: 15px; }
       body .login-screen .login #cboServer {
@@ -44,7 +49,7 @@ body {
       display: block;
       margin-top: 15px; }
   body .game #theGame {
-    width: 1000px;
+    width: 750px;
     height: 750px;
     border: 5px solid black;
     margin: 15px 15px 15px 25px; }
