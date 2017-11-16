@@ -10,6 +10,7 @@ let userName, connection;
 let content, input, status, myColor, myName;
 let player;
 let gameCanvas;
+let treat = 0;
 
 const init = ()=>{
     fetchElements();
@@ -21,7 +22,8 @@ const init = ()=>{
 const setupWebsockets = ()=>{
     window.WebSocket = window.WebSocket || window.MozWebSocket;
     
-    connection = new WebSocket('ws://snakews.homenetx.be');
+    //connection = new WebSocket('ws://snakews.homenetx.be');
+    connection = new WebSocket('ws://127.0.0.1:5001');
 
     connection.onopen = ()=>{
         //console.log("Opened connection");
@@ -60,6 +62,10 @@ const setupWebsockets = ()=>{
         {
             initCanvas("Game over...")
         }
+        if(msg.type == "treat")
+        {
+            treat = msg.data;
+        }
 
     }
 
@@ -67,11 +73,11 @@ const setupWebsockets = ()=>{
 
 const drawSnakes = (players) =>{
     let ctx = gameCanvas.getContext("2d");
+    let factor = gameCanvas.clientWidth / 100;
     ctx.clearRect(0,0, gameCanvas.width, gameCanvas.height);
     for(let i=0; i<players.length; i++){
         let color = players[i].color;
         let snake = players[i].snake.location;
-        let factor = gameCanvas.clientWidth / 100;
         ctx.fillStyle = color;
         for(let y = 0; y< snake.length; y++){
             let drawX, drawY;
@@ -86,6 +92,15 @@ const drawSnakes = (players) =>{
             //console.log("y: " + y);            
         }
 
+    }
+
+    if(treat != 0){
+        console.log("tekenen");
+        ctx.fillStyle = treat.color;
+        ctx.beginPath();
+        ctx.arc((treat.pos.x * factor) + factor/2, (treat.pos.y * factor) + factor/2, factor/2, 0,2*Math.PI);
+        ctx.fill();
+        ctx.closePath();
     }
 
 
