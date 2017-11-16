@@ -68,7 +68,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(1);
-module.exports = __webpack_require__(4);
+module.exports = __webpack_require__(7);
 
 
 /***/ }),
@@ -86,15 +86,11 @@ var _username = __webpack_require__(3);
 
 var _username2 = _interopRequireDefault(_username);
 
-var _Player = __webpack_require__(5);
+var _Player = __webpack_require__(4);
 
 var _Player2 = _interopRequireDefault(_Player);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-console.log("app loaded");
-
-console.log("login loaded");
 
 var btnSubmit = void 0,
     txtUser = void 0;
@@ -107,6 +103,7 @@ var content = void 0,
     myColor = void 0,
     myName = void 0;
 var player = void 0;
+var gameCanvas = void 0;
 
 var init = function init() {
     fetchElements();
@@ -120,7 +117,7 @@ var setupWebsockets = function setupWebsockets() {
     connection = new WebSocket('ws://127.0.0.1:5001');
 
     connection.onopen = function () {
-        console.log("Opened connection");
+        //console.log("Opened connection");
         input.disabled = false;
     };
 
@@ -129,7 +126,7 @@ var setupWebsockets = function setupWebsockets() {
     };
 
     connection.onmessage = function (message) {
-        console.log(message.data);
+        //console.log(message.data);
         var msg = JSON.parse(message.data);
         console.log(msg);
         if (msg.type == "Player" && msg.data.name == txtUser.value) {
@@ -141,15 +138,48 @@ var setupWebsockets = function setupWebsockets() {
 
         if (msg.type == "message") {
             var dt = new Date(msg.data.time);
-            addMessage(msg.data.author, msg.data.text, "purple", dt);
+            addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+        }
+
+        if (msg.type == "update") {
+            var players = msg.data;
+            console.log(players);
+            drawSnakes(players);
+        }
+        if (msg.type == "end") {
+            initCanvas("Game over...");
         }
     };
+};
+
+var drawSnakes = function drawSnakes(players) {
+    var ctx = gameCanvas.getContext("2d");
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    for (var i = 0; i < players.length; i++) {
+        var color = players[i].color;
+        var snake = players[i].snake.location;
+        var factor = gameCanvas.clientWidth / 100;
+        ctx.fillStyle = color;
+        for (var y = 0; y < snake.length; y++) {
+            var drawX = void 0,
+                drawY = void 0;
+            drawX = snake[y].x * factor + factor / 2;
+            drawY = snake[y].y * factor + factor / 2;
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, factor / 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
+            //console.log("drawX: " + drawX);
+            //console.log("drawY: ", drawY);
+            //console.log("y: " + y);            
+        }
+    }
 };
 
 var fetchElements = function fetchElements() {
     btnSubmit = document.querySelector("#btnSubmit");
     txtUser = document.querySelector("#txtUser");
-
+    txtUser.focus();
     btnSubmit.addEventListener("click", function () {
         console.log("clicked");
         checkNickname();
@@ -158,19 +188,49 @@ var fetchElements = function fetchElements() {
     content = document.querySelector("#content");
 
     input = document.querySelector("#input");
-    input.addEventListener("keydown", function (e) {
+    status = document.querySelector("#status");
+
+    gameCanvas = document.querySelector("#theGame");
+
+    window.addEventListener("keydown", function (e) {
+        //console.log(e.keyCode);
         if (e.keyCode === 13) {
+            console.log("enter");
+
+            if (document.querySelector(".login-screen").style.visibility == "visible") {
+                console.log("test");
+                checkNickname();
+                return;
+            }
+
             var msg = input.value;
             if (!msg) {
                 return;
+            } else {
+                var tr = new _transport2.default("chat", msg);
+                connection.send(JSON.stringify(tr));
+                //console.log(JSON.stringify(tr));
+                input.value = "";
             }
-            var tr = new _transport2.default("chat", msg);
-            connection.send(JSON.stringify(tr));
+        } else if (e.keyCode === 37) {
+            console.log("left");
+            var _tr = new _transport2.default("direction", 2);
+            connection.send(JSON.stringify(_tr));
             //console.log(JSON.stringify(tr));
-            input.value = "";
+        } else if (e.keyCode === 38) {
+            console.log("up");
+            var _tr2 = new _transport2.default("direction", 0);
+            connection.send(JSON.stringify(_tr2));
+        } else if (e.keyCode === 39) {
+            console.log("right");
+            var _tr3 = new _transport2.default("direction", 3);
+            connection.send(JSON.stringify(_tr3));
+        } else if (e.keyCode === 40) {
+            console.log("down");
+            var _tr4 = new _transport2.default("direction", 1);
+            connection.send(JSON.stringify(_tr4));
         }
     });
-    status = document.querySelector("#status");
 };
 
 var checkNickname = function checkNickname() {
@@ -193,12 +253,27 @@ var startSpelletje = function startSpelletje() {
     console.log("start");
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
+    document.querySelector(".game").style.visibility = "visible";
 
+    input.focus();
+    initCanvas("Waiting on other players...");
     checkChat();
 };
 
-var checkChat = function checkChat() {
+var initCanvas = function initCanvas(str) {
+    var ctx = gameCanvas.getContext("2d");
+    ctx.canvas.width = gameCanvas.clientWidth;
+    ctx.canvas.height = gameCanvas.clientHeight;
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    ctx.fillStyle = "#FFF";
+    ctx.font = "2em Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
+    ctx.fillText(str, gameCanvas.width / 2, gameCanvas.height / 2);
+};
+
+var checkChat = function checkChat() {
     setInterval(function () {
         if (connection.readyState !== 1) {
             status.innerHTML = 'Error';
@@ -282,12 +357,6 @@ exports.default = UserName;
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -297,7 +366,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Snake = __webpack_require__(6);
+var _Snake = __webpack_require__(5);
 
 var _Snake2 = _interopRequireDefault(_Snake);
 
@@ -316,7 +385,7 @@ var Player = function Player(name, color) {
 exports.default = Player;
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -328,7 +397,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Pos = __webpack_require__(7);
+var _Pos = __webpack_require__(6);
 
 var _Pos2 = _interopRequireDefault(_Pos);
 
@@ -387,7 +456,7 @@ var Snake = function () {
 exports.default = Snake;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -423,6 +492,12 @@ var Pos = function () {
 }();
 
 exports.default = Pos;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);
