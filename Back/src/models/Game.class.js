@@ -86,7 +86,6 @@ class Game{
         //controleer of de speler in het speelveld zit
         if(playerHead.x >= 0 && playerHead.y <= 100 && playerHead.y >= 0 && playerHead.y <= 100){
           //playerhead zit in het speelveld
-          console.log("in speelveld");
           //controleer of de speler een botsing heeft met een andere players
           for (var j = 0; j < this.players.length; j++) {
             if(i != j){
@@ -102,7 +101,9 @@ class Game{
 
           //kijken of de speler op de treat staat
           if(!removeIndexes.includes(i)){
-            if(playerHead.x == this.treat.x && playerHead.y == this.treat.y){
+            console.log("check treat");
+            if(playerHead.x == this.treat.pos.x && playerHead.y == this.treat.pos.y){
+              console.log("op treat");
               this.treat = new treat();
               this.broadCastTreat();
             }
