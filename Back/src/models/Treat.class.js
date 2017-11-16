@@ -3,7 +3,7 @@ const Pos = require("./Pos.class"),
 
 class Treat{
   constructor(){
-    this.color = c.green;
+    this.color = "#00FF00";
 
     let x = Math.floor(Math.random() * 99);
     let y = Math.floor(Math.random() * 99);
