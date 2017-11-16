@@ -81,22 +81,51 @@ class Game{
       let c = 0;
       let removeIndexes = [];
       for (var i = 0; i < this.players.length; i++) {
-        let player = this.players[i];
-        console.log("checking: " + player.name);
-        for (var j = 0; j < player.snake.location.length; j++) {
-          let loc = player.snake.location[j];
-          console.log(player.snake);
-          if(loc.x >= 0 && loc.x <= 100 && loc.y >= 0 && loc.y <= 100){
-            if(loc.x == this.treat.pos.x && loc.y == this.treat.pos.y){
-              //player staat op een treat.
-              this.treat = new treat();
+        let playerHead = this.players[i].location[0];
+        console.log("checking: " + this.players[i].name);
+        // for (var j = 0; j < player.snake.location.length; j++) {
+        //   this.checkWalls(player.snake.location[j], i);
+        //   let loc = player.snake.location[j];
+        //   console.log(player.snake);
+        //   if(loc.x >= 0 && loc.x <= 100 && loc.y >= 0 && loc.y <= 100){
+        //     if(loc.x == this.treat.pos.x && loc.y == this.treat.pos.y){
+        //       //player staat op een treat.
+        //       this.treat = new treat();
+        //     }
+        //   }else{
+        //     removeIndexes.push(i);
+        //     // this.players[i].isAlive = false;
+        //     // this.BroadCastDeath(this.players[i]);
+        //     // this.players.splice(i,1);
+        //   }
+        // }
+
+        //controleer of de speler in het speelveld zit
+        if(playerHead.x >= 0 && playerHead.y <= 100 && playerHead.y >= 0 && playerHead.y <= 100){
+          //playerhead zit in het speelveld
+
+          //controleer of de speler een botsing heeft met een andere players
+          for (var j = 0; j < this.players.length; j++) {
+            if(i != j){
+              for (var l = 0; l < this.players[j].location.length; l++) {
+                let targetloc = this.players[j].location[l];
+                if(playerHead.x == targetloc.x && playerHead.y == targetloc.y){
+                  //speler zit op een enemy
+                  removeIndexes.push(i);
+                }
+              }
             }
-          }else{
-            removeIndexes.push(i);
-            // this.players[i].isAlive = false;
-            // this.BroadCastDeath(this.players[i]);
-            // this.players.splice(i,1);
           }
+
+          //kijken of de speler op de treat staat
+          if(!removeIndexes.includes(i)){
+            if(playerHead.x == this.treat.x && playerHead.y == this.treat.y){
+              this.treat = new treat();
+              this.broadCastTreat();
+            }
+          }
+        }else{
+          removeIndexes.push(i);
         }
       }
       let removed = 0;
