@@ -1,4 +1,5 @@
-const Player = require("./Player.Class");
+const Player = require("./Player.Class"),
+      treat = require("./treat.class");
 
 //main game
 class Game{
@@ -35,6 +36,8 @@ class Game{
   Start(){
     if(!this.play && this.players.length >= 2){
       this.play = true;
+      this.treat = new treat();
+      this.broadCastTreat();
       console.log("Start Game");
       this.Main();
     }
@@ -84,7 +87,10 @@ class Game{
           let loc = player.snake.location[j];
           console.log(player.snake);
           if(loc.x >= 0 && loc.x <= 100 && loc.y >= 0 && loc.y <= 100){
-
+            if(loc.x == this.treat.pos.x && loc.y == this.treat.pos.y){
+              //player staat op een treat.
+              this.treat = new treat();
+            }
           }else{
             removeIndexes.push(i);
             // this.players[i].isAlive = false;
@@ -161,6 +167,12 @@ class Game{
     return new Promise((ok, nok) => {
       client.sendUTF(JSON.stringify({type: "update", data: this.players}));
     });
+  }
+
+  broadCastTreat(){
+    for (var i = 0; i < this.clients.length; i++) {
+      this.clients[i].sendUTF(JSON.stringify({type: "treat", data: this.treat}));
+    }
   }
 }
 
