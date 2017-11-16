@@ -114,7 +114,7 @@ var init = function init() {
 var setupWebsockets = function setupWebsockets() {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    connection = new WebSocket('ws://127.0.0.1:5001');
+    connection = new WebSocket('ws://snakews.homenetx.be');
 
     connection.onopen = function () {
         //console.log("Opened connection");
