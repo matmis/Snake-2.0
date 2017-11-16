@@ -104,6 +104,7 @@ var content = void 0,
     myName = void 0;
 var player = void 0;
 var gameCanvas = void 0;
+var treat = 0;
 
 var init = function init() {
     fetchElements();
@@ -114,7 +115,8 @@ var init = function init() {
 var setupWebsockets = function setupWebsockets() {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    connection = new WebSocket('ws://snakews.homenetx.be');
+    //connection = new WebSocket('ws://snakews.homenetx.be');
+    connection = new WebSocket('ws://127.0.0.1:5001');
 
     connection.onopen = function () {
         //console.log("Opened connection");
@@ -149,16 +151,19 @@ var setupWebsockets = function setupWebsockets() {
         if (msg.type == "end") {
             initCanvas("Game over...");
         }
+        if (msg.type == "treat") {
+            treat = msg.data;
+        }
     };
 };
 
 var drawSnakes = function drawSnakes(players) {
     var ctx = gameCanvas.getContext("2d");
+    var factor = gameCanvas.clientWidth / 100;
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
     for (var i = 0; i < players.length; i++) {
         var color = players[i].color;
         var snake = players[i].snake.location;
-        var factor = gameCanvas.clientWidth / 100;
         ctx.fillStyle = color;
         for (var y = 0; y < snake.length; y++) {
             var drawX = void 0,
@@ -173,6 +178,15 @@ var drawSnakes = function drawSnakes(players) {
             //console.log("drawY: ", drawY);
             //console.log("y: " + y);            
         }
+    }
+
+    if (treat != 0) {
+        console.log("tekenen");
+        ctx.fillStyle = treat.color;
+        ctx.beginPath();
+        ctx.arc(treat.pos.x * factor + factor / 2, treat.pos.y * factor + factor / 2, factor / 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.closePath();
     }
 };
 
