@@ -12,11 +12,12 @@ class Snake{
     this.location = [];
 
     this.direction = this.directions.RIGHT;
-
-    this.location.push(new Pos(3,0));
-    this.location.push(new Pos(2,0));
-    this.location.push(new Pos(1,0));
-    this.location.push(new Pos(0,0));
+    let randomX = (Math.random()*97)+3;
+    let randomY = Math.random()*100;
+    this.location.push(new Pos(randomX,randomY));
+    this.location.push(new Pos(randomX-1,randomY));
+    this.location.push(new Pos(randomX-2,randomY));
+    this.location.push(new Pos(randomX-3,randomY));
   }
 
   GameTick(){
