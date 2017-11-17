@@ -22,6 +22,7 @@ class Snake{
 
   GameTick(){
     let head;
+    this.end = this.location[this.location.length - 1];
     switch (this.direction) {
       case this.directions.UP:
         head = new Pos(this.location[0].x, this.location[0].y - 1);
@@ -39,6 +40,10 @@ class Snake{
     }
     this.location.splice(0,0,head);
     this.location.splice(this.location.length-1,1);
+  }
+
+  Grow(){
+    this.location.push(this.end);
   }
 
 }

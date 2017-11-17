@@ -1,12 +1,12 @@
-const Player = require("./Player.Class"),
-      treat = require("./treat.class");
+const Player = require("./Player.class"),
+      treat = require("./Treat.class");
 
 //main game
 class Game{
   constructor(){
     this.players = [];
     this.play = false;
-    this.tickTime = 750;
+    this.tickTime = 500;
     this.clients = [];
     this.max = 100;
   }
@@ -31,22 +31,22 @@ class Game{
       let i = this.players.indexOf(p);
       switch (direction) {
         case 0:
-          if(p.direction != 1){
+          if(p.snake.direction != 1){
             this.players[i].snake.direction = direction;
           }
           break;
         case 1:
-          if(p.direction != 0){
+          if(p.snake.direction != 0){
             this.players[i].snake.direction = direction;
           }
           break;
         case 2:
-          if(p.direction != 3){
+          if(p.snake.direction != 3){
             this.players[i].snake.direction = direction;
           }
           break;
         case 3:
-          if(p.direction != 2){
+          if(p.snake.direction != 2){
             this.players[i].snake.direction = direction;
           }
           break;
@@ -129,6 +129,8 @@ class Game{
               console.log("op treat");
               this.treat = new treat();
               this.broadCastTreat();
+              this.players[i].snake.Grow();
+              this.players[i].score++;
             }
           }
         }

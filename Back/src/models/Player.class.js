@@ -6,6 +6,7 @@ class Player{
     this.snake = new Snake();
     this.color = color;
     this.isAlive = true;
+    this.score = 0;
   }
 
 
