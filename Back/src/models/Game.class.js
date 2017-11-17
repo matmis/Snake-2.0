@@ -29,7 +29,30 @@ class Game{
     let p = this.players.find(obj => obj.name == name);
     if(p != null){
       let i = this.players.indexOf(p);
-      this.players[i].snake.direction = direction;
+      switch (direction) {
+        case 0:
+          if(p.direction != 1){
+            this.players[i].snake.direction = direction;
+          }
+          break;
+        case 1:
+          if(p.direction != 0){
+            this.players[i].snake.direction = direction;
+          }
+          break;
+        case 2:
+          if(p.direction != 3){
+            this.players[i].snake.direction = direction;
+          }
+          break;
+        case 3:
+          if(p.direction != 2){
+            this.players[i].snake.direction = direction;
+          }
+          break;
+        default:
+
+      }
     }
   }
 
