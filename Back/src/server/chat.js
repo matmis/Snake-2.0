@@ -37,7 +37,8 @@ let chatServer = () => {
       let input = JSON.parse(message.utf8Data);
       if(input.model == "username"){
         userName = htmlEntities(input.data.username);
-        userColor = c.GetRandomColor((userColor) => {
+        c.GetRandomColor((userc) => {
+          userColor = userc;
           NewUserName(userName, userColor, input.data);
           game.Start();
         });
