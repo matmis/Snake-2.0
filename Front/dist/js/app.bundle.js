@@ -142,11 +142,14 @@ var setupWebsockets = function setupWebsockets() {
             var dt = new Date(msg.data.time);
             addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
         }
-
+        if (msg.type == "Player") {
+            showScores(msg.data, false);
+        }
         if (msg.type == "update") {
             var players = msg.data;
             console.log(players);
             drawSnakes(players);
+            showScores(players, true);
         }
         if (msg.type == "end") {
             initCanvas("Game over...");
@@ -155,6 +158,18 @@ var setupWebsockets = function setupWebsockets() {
             treat = msg.data;
         }
     };
+};
+var showScores = function showScores(players, bool) {
+    var bobTheHtmlBuilder = "";
+    if (bool) {
+        players.forEach(function (player) {
+            bobTheHtmlBuilder += "<div><div ><div style=\"background-color: " + player.color + "\"></div><p>" + player.name + "</p></div><p>" + player.score + "</p></div>";
+        }, undefined);
+    } else {
+        bobTheHtmlBuilder += "<div><div ><div style=\"background-color: " + players.color + "\"></div><p>" + players.name + "</p></div><p>" + players.score + "</p></div>";
+    }
+    document.querySelector(".players").innerHTML = bobTheHtmlBuilder;
+    console.log("Weggeschreven");
 };
 
 var drawSnakes = function drawSnakes(players) {
@@ -282,6 +297,7 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
+    document.querySelector(".players").style.visibility = "visible";
 
     input.focus();
     initCanvas("Waiting on other players...");

@@ -158,7 +158,49 @@ body{
         margin: 15px 15px 15px 15px;
     }
 }
+
+.players{
+    display: flex; 
+    flex-flow: column;
+    justify-content: flex-start;
+    margin-top: 15px;
+    div{
+        margin-top: 5px;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        width: 200px;
+
+
+    div{
+
+        display: flex;
+        flex-flow: row;
+        color: white;
+        div{
+            width:10px;
+            height: 30px;
+        }
+        p{
+            margin: 0px;
+            margin-left: 10px;
+            font-size: 1.2em;
+            color: white;
+            line-height: 30px;
+        }
     }
+    p{
+
+        margin: 0px;
+        margin-top: 5px;
+        color: white;
+        line-height: 30px;
+        font-size: 1.2em;
+    }
+    }
+}
+
+}
 
 footer{
     color: white;
