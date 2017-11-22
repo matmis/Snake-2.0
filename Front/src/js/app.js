@@ -138,7 +138,7 @@ const fetchElements = () =>{
     gameCanvas.width = width;
     gameCanvas.height = width;
     console.log("width: ", width);
-    document.querySelector(".chat").style.height = document.querySelector("main").clientHeight + "px";
+    document.querySelector(".chat").style.height = document.querySelector(".game").clientHeight + "px";
     
     window.addEventListener("keydown", (e)=>{
         //console.log(e.keyCode);
@@ -188,11 +188,11 @@ const fetchElements = () =>{
 }
 
 const checkNickname = ()=>{
-    let regex = new RegExp("^[a-zA-Z ]+$");
+    let regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
 
     if(!regex.test(txtUser.value))
     {
-        console.log("Niet goed");
+        document.querySelector("#loginerror").innerHTML = "Only alphanumeric characters allowed!";
     }
     else{
         console.log("wel goed");

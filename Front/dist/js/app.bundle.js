@@ -218,7 +218,7 @@ var fetchElements = function fetchElements() {
     gameCanvas.width = width;
     gameCanvas.height = width;
     console.log("width: ", width);
-    document.querySelector(".chat").style.height = document.querySelector("main").clientHeight + "px";
+    document.querySelector(".chat").style.height = document.querySelector(".game").clientHeight + "px";
 
     window.addEventListener("keydown", function (e) {
         //console.log(e.keyCode);
@@ -262,10 +262,10 @@ var fetchElements = function fetchElements() {
 };
 
 var checkNickname = function checkNickname() {
-    var regex = new RegExp("^[a-zA-Z ]+$");
+    var regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
 
     if (!regex.test(txtUser.value)) {
-        console.log("Niet goed");
+        document.querySelector("#loginerror").innerHTML = "Only alphanumeric characters allowed!";
     } else {
         console.log("wel goed");
 
