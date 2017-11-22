@@ -88,6 +88,7 @@ class Game{
       }else{
         console.log("end");
         this.BroadCastEnd();
+        this.players = [];
         clearInterval(tick);
       }
     }, this.tickTime);
@@ -107,16 +108,32 @@ class Game{
         let playerHead = this.players[i].snake.location[0];
 
         //controleer of de speler in het speelveld zit
-        if(playerHead.x >= 0 && playerHead.y <= 100 && playerHead.y >= 0 && playerHead.y <= 100){
+        if(playerHead.x >= 0 && playerHead.x <= 100 && playerHead.y >= 0 && playerHead.y <= 100){
           //playerhead zit in het speelveld
+
+          //controleer of de speler een botsing heeft met zichzelf
+          let snakelength = this.players[i].snake.location.length;
+          for (var m = 1; m < snakelength; m++) {
+            let targetloc = this.players[i].snake.location[m];
+            console.log("debug targetloc: ", targetloc);
+            if(playerHead.x == targetloc.x && playerHead.y == targetloc.y){
+              if(!removeIndexes.includes(i)){
+                removeIndexes.push(i);
+              }
+            }
+          }
+
           //controleer of de speler een botsing heeft met een andere players
-          for (var j = 0; j < this.players.length; j++) {
+          let AmountOfPllayers = this.players.length;
+          for (var j = 0; j < AmountOfPllayers; j++) {
             if(i != j){
               for (var l = 0; l < this.players[j].snake.location.length; l++) {
                 let targetloc = this.players[j].snake.location[l];
                 if(playerHead.x == targetloc.x && playerHead.y == targetloc.y){
                   //speler zit op een enemy
-                  removeIndexes.push(i);
+                  if(!removeIndexes.includes(i)){
+                      removeIndexes.push(i);
+                  }
                 }
               }
             }
@@ -135,7 +152,9 @@ class Game{
           }
         }
         else{
-          removeIndexes.push(i);
+          if(!removeIndexes.includes(i)){
+              removeIndexes.push(i);
+          }
         }
       }
       let removed = 0;
