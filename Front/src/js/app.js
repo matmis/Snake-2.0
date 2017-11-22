@@ -109,6 +109,7 @@ const drawSnakes = (players) =>{
 }
 
 const fetchElements = () =>{
+
     btnSubmit = document.querySelector("#btnSubmit");
     txtUser = document.querySelector("#txtUser");
     txtUser.focus();
@@ -123,7 +124,22 @@ const fetchElements = () =>{
     status = document.querySelector("#status");
 
     gameCanvas = document.querySelector("#theGame");
-
+    console.log("width: ",window.screen.availWidth);
+    console.log("height: ",window.screen.availHeight);
+    let width = 0;
+    if(window.screen.availWidth < window.screen.availHeight)
+    {
+        width = window.innerWidth;
+    }
+    else{
+        width = window.innerHeight - 25 - 15 - 15 - 20 - 15;
+    }
+    
+    gameCanvas.width = width;
+    gameCanvas.height = width;
+    console.log("width: ", width);
+    document.querySelector(".chat").style.height = document.querySelector("main").clientHeight + "px";
+    
     window.addEventListener("keydown", (e)=>{
         //console.log(e.keyCode);
         if (e.keyCode === 13) {

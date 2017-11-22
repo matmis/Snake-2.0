@@ -70,6 +70,11 @@ body{
 }
 
 .chat{
+    width: 20%;
+    word-wrap: break-word;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
     h1{
         font-family: 'Niconne', cursive;
         font-size: 4rem;
@@ -78,7 +83,10 @@ body{
         span{
             color: darkorange;
         }
+        text-align: center;
     }
+    #chatbox{
+        
     #content { 
         padding:5px; 
         background:#101010; 
@@ -120,6 +128,7 @@ body{
         background-color: black;
         outline: none;
         color: white;
+        margin-bottom: 20px;
     }
 
     #status { 
@@ -127,15 +136,15 @@ body{
         display:block; 
         margin-top:15px;
         color: darkorange;
+        margin-bottom: 20px;
     }  
+}
     }
 
 }
 
 .game{
     #theGame{
-        width: 750px;
-        height: 750px;
         border: 5px solid white;
         background-color: black;
         margin: 15px 15px 15px 25px;
@@ -148,6 +157,7 @@ footer{
     text-align: center;
     font-size: 1.2em;
     height: 25px;
+    margin-bottom: 15px;
 }
 
 
