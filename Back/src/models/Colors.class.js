@@ -8,6 +8,16 @@ class Colors{
     this.plum = "#8E4585";
     this.orange = "#FFA500";
   }
+
+  GetRandomColor(cb){
+    //let letters = '0123456789ABCDEF';
+    let letters = '456789ABCDEF';
+    let c = "#";
+    for (var i = 0; i < 6; i++) {
+      c += letters[Math.floor(Math.random()*letters.length)];
+    }
+    cb(c);
+  }
 }
 
 module.exports = Colors;

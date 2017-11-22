@@ -37,9 +37,10 @@ let chatServer = () => {
       let input = JSON.parse(message.utf8Data);
       if(input.model == "username"){
         userName = htmlEntities(input.data.username);
-        userColor = c.red;
-        NewUserName(userName, userColor, input.data);
-        game.Start();
+        userColor = c.GetRandomColor((userColor) => {
+          NewUserName(userName, userColor, input.data);
+          game.Start();
+        });
       }
       if(input.model == "chat"){
         BroadCastChat(userName, userColor, input.data);
