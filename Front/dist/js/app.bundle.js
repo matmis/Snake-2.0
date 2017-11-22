@@ -181,7 +181,7 @@ var drawSnakes = function drawSnakes(players) {
     }
 
     if (treat != 0) {
-        console.log("tekenen");
+        //console.log("tekenen");
         ctx.fillStyle = treat.color;
         ctx.beginPath();
         ctx.arc(treat.pos.x * factor + factor / 2, treat.pos.y * factor + factor / 2, factor / 2, 0, 2 * Math.PI);
