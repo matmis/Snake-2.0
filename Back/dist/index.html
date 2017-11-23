@@ -9,10 +9,12 @@
     <script src="js/app.bundle.js" defer></script>
 </head>
 <body>
-    
+    <main>
     <div class="login-screen" style="visibility: visible">
     <div class="login">
+
         <h1>Snake <span>2.0</span></h1>
+        <p id="loginerror">Eat treats to grow, avoid walls and other players!</p>
         <input type="text" name="txtUser" id="txtUser" placeholder="Enter your nickname..."/>
         <!--
         <select id="cboServer" name="cboServer">
@@ -23,20 +25,30 @@
         </select>
     -->
         <button name="btnSubmit" id="btnSubmit" value="Start">Start</button>
+
     </div>
     </div>  
 
     <div class="chat" style="visibility: hidden">
         <h1>Snake <span>2.0</span></h1>
+        <div id="chatbox">
         <div id="content"></div>
-        <div id="message">
-            <span id="status">Connecting...</span>
-            <input type="text" id="input" disabled="disabled" />
+            <div id="message">
+                <span id="status">Connecting...</span>
+                <input type="text" id="input" disabled="disabled" />
+            </div>
         </div>
     </div>
     <div class="game" style="visibility: hidden">
         <canvas id="theGame"/>
     </div>
+    <div class="players" style="visibility: hidden">
+        
+    </div>
+</main>
+    <footer>
+        &copy; Yann Provoost & Arne Cornillie
+    </footer>
 
 </body>
 

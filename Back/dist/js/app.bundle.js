@@ -104,6 +104,7 @@ var content = void 0,
     myName = void 0;
 var player = void 0;
 var gameCanvas = void 0;
+var treat = 0;
 
 var init = function init() {
     fetchElements();
@@ -114,7 +115,8 @@ var init = function init() {
 var setupWebsockets = function setupWebsockets() {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    connection = new WebSocket('ws://127.0.0.1:5001');
+    connection = new WebSocket('ws://snakews.homenetx.be');
+    //connection = new WebSocket('ws://127.0.0.1:5001');
 
     connection.onopen = function () {
         //console.log("Opened connection");
@@ -140,25 +142,43 @@ var setupWebsockets = function setupWebsockets() {
             var dt = new Date(msg.data.time);
             addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
         }
-
+        if (msg.type == "Player") {
+            showScores(msg.data, false);
+        }
         if (msg.type == "update") {
             var players = msg.data;
             console.log(players);
             drawSnakes(players);
+            showScores(players, true);
         }
         if (msg.type == "end") {
             initCanvas("Game over...");
         }
+        if (msg.type == "treat") {
+            treat = msg.data;
+        }
     };
+};
+var showScores = function showScores(players, bool) {
+    var bobTheHtmlBuilder = "";
+    if (bool) {
+        players.forEach(function (player) {
+            bobTheHtmlBuilder += "<div><div ><div style=\"background-color: " + player.color + "\"></div><p>" + player.name + "</p></div><p>" + player.score + "</p></div>";
+        }, undefined);
+    } else {
+        bobTheHtmlBuilder += "<div><div ><div style=\"background-color: " + players.color + "\"></div><p>" + players.name + "</p></div><p>" + players.score + "</p></div>";
+    }
+    document.querySelector(".players").innerHTML = bobTheHtmlBuilder;
+    console.log("Weggeschreven");
 };
 
 var drawSnakes = function drawSnakes(players) {
     var ctx = gameCanvas.getContext("2d");
+    var factor = gameCanvas.clientWidth / 100;
     ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
     for (var i = 0; i < players.length; i++) {
         var color = players[i].color;
         var snake = players[i].snake.location;
-        var factor = gameCanvas.clientWidth / 100;
         ctx.fillStyle = color;
         for (var y = 0; y < snake.length; y++) {
             var drawX = void 0,
@@ -174,9 +194,19 @@ var drawSnakes = function drawSnakes(players) {
             //console.log("y: " + y);            
         }
     }
+
+    if (treat != 0) {
+        //console.log("tekenen");
+        ctx.fillStyle = treat.color;
+        ctx.beginPath();
+        ctx.arc(treat.pos.x * factor + factor / 2, treat.pos.y * factor + factor / 2, factor / 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.closePath();
+    }
 };
 
 var fetchElements = function fetchElements() {
+
     btnSubmit = document.querySelector("#btnSubmit");
     txtUser = document.querySelector("#txtUser");
     txtUser.focus();
@@ -191,6 +221,11 @@ var fetchElements = function fetchElements() {
     status = document.querySelector("#status");
 
     gameCanvas = document.querySelector("#theGame");
+
+    positionEverything();
+    window.addEventListener("resize", function (e) {
+        positionEverything();
+    });
 
     window.addEventListener("keydown", function (e) {
         //console.log(e.keyCode);
@@ -233,11 +268,27 @@ var fetchElements = function fetchElements() {
     });
 };
 
+var positionEverything = function positionEverything() {
+    console.log("width: ", window.screen.availWidth);
+    console.log("height: ", window.screen.availHeight);
+    var width = 0;
+    if (window.innerWidth < window.innerHeight) {
+        width = 20;
+    } else {
+        width = window.innerHeight - 25 - 15 - 15 - 20 - 15;
+    }
+
+    gameCanvas.width = width;
+    gameCanvas.height = width;
+    console.log("width: ", width);
+    document.querySelector(".chat").style.height = document.querySelector(".game").clientHeight + "px";
+};
+
 var checkNickname = function checkNickname() {
-    var regex = new RegExp("^[a-zA-Z ]+$");
+    var regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
 
     if (!regex.test(txtUser.value)) {
-        console.log("Niet goed");
+        document.querySelector("#loginerror").innerHTML = "Only alphanumeric characters allowed!";
     } else {
         console.log("wel goed");
 
@@ -254,6 +305,7 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".login-screen").style.visibility = "hidden";
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
+    document.querySelector(".players").style.visibility = "visible";
 
     input.focus();
     initCanvas("Waiting on other players...");
