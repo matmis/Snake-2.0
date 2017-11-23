@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Snake</title>
     <link href="css/app.css" rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
     <script src="js/app.bundle.js" defer></script>
 </head>
 <body>
@@ -27,7 +28,7 @@
         <button name="btnSubmit" id="btnSubmit" value="Start">Start</button>
 
     </div>
-    </div>  
+    </div>
 
     <div class="chat" style="visibility: hidden">
         <h1>Snake <span>2.0</span></h1>
@@ -43,7 +44,7 @@
         <canvas id="theGame"/>
     </div>
     <div class="players" style="visibility: hidden">
-        
+
     </div>
 </main>
     <footer>

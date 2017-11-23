@@ -21,8 +21,18 @@ const init = ()=>{
 
 const setupWebsockets = ()=>{
     window.WebSocket = window.WebSocket || window.MozWebSocket;
-    
+
+    let socket = io.connect("http://localhost:5000");
     //connection = new WebSocket('ws://snakews.homenetx.be');
+
+    socket.emit("message", "tetten");
+    socket.on("history", (data) => {
+      console.log(data);
+    });
+    socket.on("message", (data) => {
+      console.log(data);
+    });
+
     connection = new WebSocket('ws://127.0.0.1:5001');
 
     connection.onopen = ()=>{
@@ -106,7 +116,7 @@ const drawSnakes = (players) =>{
             ctx.closePath();
             //console.log("drawX: " + drawX);
             //console.log("drawY: ", drawY);
-            //console.log("y: " + y);            
+            //console.log("y: " + y);
         }
 
     }
@@ -121,7 +131,7 @@ const drawSnakes = (players) =>{
     }
 
 
-    
+
 
 }
 
@@ -136,22 +146,22 @@ const fetchElements = () =>{
     });
 
     content = document.querySelector("#content");
- 
+
     input = document.querySelector("#input");
     status = document.querySelector("#status");
 
     gameCanvas = document.querySelector("#theGame");
-    
+
     positionEverything();
     window.addEventListener("resize", (e)=>{
         positionEverything();
     });
-    
+
     window.addEventListener("keydown", (e)=>{
         //console.log(e.keyCode);
         if (e.keyCode === 13) {
             console.log("enter");
-            
+
             if(document.querySelector(".login-screen").style.visibility == "visible"){
                 console.log("test");
                 checkNickname();
@@ -205,7 +215,7 @@ const positionEverything = ()=>{
     else{
         width = window.innerHeight - 25 - 15 - 15 - 20 - 15;
     }
-    
+
     gameCanvas.width = width;
     gameCanvas.height = width;
     console.log("width: ", width);
@@ -226,7 +236,7 @@ const checkNickname = ()=>{
         userName = new Username(txtUser.value);
         let tr = new Transport("username", userName);
         connection.send(JSON.stringify(tr));
-        
+
 
         startSpelletje();
     }
