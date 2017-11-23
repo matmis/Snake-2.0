@@ -6,7 +6,7 @@ class Game{
   constructor(){
     this.players = [];
     this.play = false;
-    this.tickTime = 500;
+    this.tickTime = 350;
     this.clients = [];
     this.max = 100;
   }

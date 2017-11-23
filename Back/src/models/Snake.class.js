@@ -12,7 +12,7 @@ class Snake{
     this.location = [];
 
     this.direction = this.directions.RIGHT;
-    let randomX = Math.floor((Math.random()*97)+3);
+    let randomX = Math.floor((Math.random()*85)+3);
     let randomY = Math.floor(Math.random()*100);
     this.location.push(new Pos(randomX,randomY));
     this.location.push(new Pos(randomX-1,randomY));

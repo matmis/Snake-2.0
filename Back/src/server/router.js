@@ -15,7 +15,8 @@ let router = (() => {
     ".png": "image/png",
     ".gif": "image/gif",
     ".jpg": "image/jpeg",
-    ".ico": "image/x-icon"
+    ".ico": "image/x-icon",
+    ".txt": "plain/text"
   };
 
   const init = (req, res, cb) => {
@@ -25,7 +26,7 @@ let router = (() => {
     let extension = path.extname(path.basename(req.url));
 
     if(req.method == "GET"){
-      req.url = _staticFolder + "\\" + req.url;
+      req.url = _staticFolder + "/" + req.url;
       console.log(req.url);
         RequestHandlers.getFile(req.url, (error, rs) => {
         cb(null, rs, extensions[extension]);
