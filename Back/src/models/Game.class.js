@@ -194,10 +194,10 @@ class Game{
 
   BroadCastDeath(player){
     for (var i = 0; i < this.clients.length; i++) {
-      this.clients[i].sendUTF(JSON.stringify({type: "death", data: player}));
       let msg = this.CreateChatMsg("Server", "#FF0000", player.name + " has died in action");
       this.clients[i].sendUTF(JSON.stringify({type: "message", data: msg}));
     }
+    this.eventEmitter.emit("Death", player);
   }
 
   BroadCastEnd(){
@@ -206,30 +206,11 @@ class Game{
     }
   }
 
-  CreateChatMsg(userName, userColor, data){
-    let msg = {
-      time: (new Date()).getTime(),
-      text: data,
-      author: userName,
-      color: userColor
-    };
-    return msg;
-  }
-
   BroadCastUpdate(){
     this.eventEmitter.emit("update", this.players);
   }
 
-  SendData(client){
-    return new Promise((ok, nok) => {
-      client.sendUTF(JSON.stringify({type: "update", data: this.players}));
-    });
-  }
-
   broadCastTreat(){
-    // for (var i = 0; i < this.clients.length; i++) {
-    //   this.clients[i].sendUTF(JSON.stringify({type: "treat", data: this.treat}));
-    // }
     this.eventEmitter.emit("treat", this.treat);
   }
 }
