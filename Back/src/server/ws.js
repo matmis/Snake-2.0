@@ -68,6 +68,7 @@ let ws = (socketio) => {
   eventEmitter.on("death", (player) => {
     CreateChatMsg(player.name, player.color, player.name + " has died in action", (msg) => {
       io.local.emit("message", msg);
+      
     });
   });
 
