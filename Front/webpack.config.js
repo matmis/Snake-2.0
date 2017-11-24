@@ -6,11 +6,11 @@ extractPlugin = require("extract-text-webpack-plugin");
 module.exports = {
 entry: ['./src/js/app.js', './src/scss/app.scss'],
 output:{
-    path: path.resolve(__dirname, 'dist/js'),
+    path: path.resolve(__dirname, '../Back/dist/js'),
     filename: 'app.bundle.js'
 },
 plugins: [
-    new cleanWebpackPlugin('[dist/js]'),
+    new cleanWebpackPlugin('[../Back/dist/js]'),
     new extractPlugin({
         filename: '../css/app.css',
         allChunks: true
