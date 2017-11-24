@@ -17,7 +17,8 @@ let ws = (socketio) => {
     SendChatHistory(socket).then(
       () => {
         socket.on("username", (username) => {
-          socket.userName = htmlEntities(username);
+          // socket.userName = htmlEntities(username);
+          socket.userName = username;
           c.GetRandomColor((userc) => {
             socket.userColor = userc;
             CreateChatMsg(socket.userName, socket.userColor, socket.userName + " is now connected", (msg) => {
