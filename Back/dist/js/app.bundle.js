@@ -118,9 +118,8 @@ var setupWebsockets = function setupWebsockets() {
 
     //socket.emit("message", "tetten");
     socket.on("Player", function (data) {
-        console.log(data);
-        var msg = JSON.parse(data);
-        if (msg.data.name == txtUser.value) {
+        console.log("Player: ", data);
+        if (data.name == txtUser.value) {
             //console.log(msg.data.name)
             player = msg.data;
             //console.log(player);
@@ -131,18 +130,14 @@ var setupWebsockets = function setupWebsockets() {
     });
 
     socket.on("message", function (data) {
-        console.log(data);
-        var msg = data;
-        console.log(msg);
-        var dt = new Date(msg.data.time);
-        addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+        console.log("Message: ", data);
+        var dt = new Date(data.time);
+        addMessage(data.author, data.text, data.color, dt);
     });
 
     socket.on("update", function (data) {
         console.log(data);
-        var msg = JSON.parse(data);
-        console.log(msg);
-        var players = msg.data;
+        var players = data;
         console.log(players);
         drawSnakes(players);
         showScores(players, true);
@@ -152,8 +147,6 @@ var setupWebsockets = function setupWebsockets() {
         console.log(data);
         initCanvas("Game Over...");
     });
-    //dsfqdsfdsqf
-
     socket.on("treat", function (data) {
         console.log(data);
         treat = msg.data;
@@ -242,7 +235,7 @@ var fetchElements = function fetchElements() {
             if (!msg) {
                 return;
             } else {
-                socket.emit("chat", JSON.stringify(msg));
+                socket.emit("chat", msg);
                 //console.log(JSON.stringify(tr));
                 input.value = "";
             }
@@ -287,9 +280,8 @@ var checkNickname = function checkNickname() {
     } else {
         console.log("wel goed");
 
-        userName = new _username2.default(txtUser.value);
-        socket.emit("username", JSON.stringify(userName));
-
+        userName = txtUser.value;
+        socket.emit("username", userName);
         startSpelletje();
     }
 };
