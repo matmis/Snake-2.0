@@ -81,7 +81,6 @@ class Game{
           (ok) => {
             console.log("snakes updated");
             this.CheckSnakes().then((ok) => {
-              console.log("snakes checked");
               this.BroadCastUpdate();
               this.checkAmountOfPlayers();
             });
@@ -118,6 +117,7 @@ class Game{
             let targetloc = this.players[i].snake.location[m];
             console.log("debug targetloc: ", targetloc);
             if(playerHead.x == targetloc.x && playerHead.y == targetloc.y){
+              console.log("player " + this.players[i].name + " has died because he had a collision with himself");
               if(!removeIndexes.includes(i)){
                 removeIndexes.push(i);
               }
@@ -132,6 +132,7 @@ class Game{
                 let targetloc = this.players[j].snake.location[l];
                 if(playerHead.x == targetloc.x && playerHead.y == targetloc.y){
                   //speler zit op een enemy
+                  console.log("player " + this.players[i].name + " has died because he had a collision with " + this.players[j].name);
                   if(!removeIndexes.includes(i)){
                       removeIndexes.push(i);
                   }
@@ -142,7 +143,6 @@ class Game{
 
           //kijken of de speler op de treat staat
           if(!removeIndexes.includes(i)){
-            console.log("check treat");
             if(playerHead.x == this.treat.pos.x && playerHead.y == this.treat.pos.y){
               console.log("op treat");
               this.treat = new treat();
@@ -154,6 +154,7 @@ class Game{
         }
         else{
           if(!removeIndexes.includes(i)){
+            console.log("player " + this.players[i].name + " has died because he went outside of the playing field");
               removeIndexes.push(i);
           }
         }
