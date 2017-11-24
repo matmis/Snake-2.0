@@ -27,9 +27,8 @@ const setupWebsockets = ()=>{
 
     //socket.emit("message", "tetten");
     socket.on("Player", (data) => {
-        console.log(data);
-        let msg = JSON.parse(data);
-      if(msg.data.name == txtUser.value)
+    console.log("Player: ",data);
+      if(data.name == txtUser.value)
       {
           //console.log(msg.data.name)
           player = msg.data;
@@ -41,18 +40,14 @@ const setupWebsockets = ()=>{
     });
 
     socket.on("message", (data)=>{
-        console.log(data);
-        let msg = JSON.parse(data);
-        console.log(msg);
-        let dt = new Date(msg.data.time)
-        addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+        console.log("Message: ",data);
+        let dt = new Date(data.time)
+        addMessage(data.author, data.text, data.color, dt);
     });
 
     socket.on("update", (data)=>{
         console.log(data);
-        let msg = JSON.parse(data);
-        console.log(msg);
-        let players = msg.data;
+        let players = data;
         console.log(players);
         drawSnakes(players);
         showScores(players, true);
@@ -157,7 +152,7 @@ const fetchElements = () =>{
             if (!msg) {
                     return;
             }else{
-            socket.emit("chat", JSON.stringify(msg));
+            socket.emit("chat", msg);
             //console.log(JSON.stringify(tr));
             input.value = "";
             }
@@ -214,9 +209,7 @@ const checkNickname = ()=>{
 
 
         userName = txtUser.value;
-        console.log(userName);
-        socket.emit("username", JSON.stringify(userName));
-        console.log(JSON.stringify(userName));
+        socket.emit("username", userName);
         startSpelletje();
     }
 };
