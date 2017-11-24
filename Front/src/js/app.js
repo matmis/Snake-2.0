@@ -62,6 +62,7 @@ const setupWebsockets = ()=>{
         console.log(data);
         initCanvas("Game Over...");
     });
+    //dsfqdsfdsqf
 
     socket.on("treat", (data)=>{
         console.log(data);
