@@ -105,6 +105,7 @@ var socket = void 0;
 var player = void 0;
 var gameCanvas = void 0;
 var treat = 0;
+var socket;
 
 var init = function init() {
     fetchElements();
@@ -114,10 +115,17 @@ var init = function init() {
 
 var setupWebsockets = function setupWebsockets() {
 
+<<<<<<< HEAD
     socket = io.connect(location.protocol + "//" + location.host);
 
     //socket.emit("message", "tetten");
     socket.on("Player", function (data) {
+=======
+    socket = io.connect("http://localhost:5000");
+    //connection = new WebSocket('ws://snakews.homenetx.be');
+
+    socket.on("history", function (data) {
+>>>>>>> 652cba56651dc388c65b6e9939f53ec37e0e4626
         console.log(data);
         var msg = JSON.parse(data);
         if (msg.data.name == txtUser.value) {
@@ -136,6 +144,9 @@ var setupWebsockets = function setupWebsockets() {
         console.log(msg);
         var dt = new Date(msg.data.time);
         addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+    });
+    socket.on("update", function(data){
+      console.log("update received: " + data);
     });
 
     socket.on("update", function (data) {
@@ -287,7 +298,13 @@ var checkNickname = function checkNickname() {
         console.log("wel goed");
 
         userName = new _username2.default(txtUser.value);
+<<<<<<< HEAD
         socket.emit("username", JSON.stringify(userName));
+=======
+        var tr = new _transport2.default("username", userName);
+        socket.emit("username", userName);
+        connection.send(JSON.stringify(tr));
+>>>>>>> 652cba56651dc388c65b6e9939f53ec37e0e4626
 
         startSpelletje();
     }

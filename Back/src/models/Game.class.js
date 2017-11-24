@@ -3,12 +3,13 @@ const Player = require("./Player.class"),
 
 //main game
 class Game{
-  constructor(){
+  constructor(eventEmitter){
     this.players = [];
     this.play = false;
     this.tickTime = 350;
     this.clients = [];
     this.max = 100;
+    this.eventEmitter = eventEmitter;
   }
 
   AddPlayer(player){
@@ -216,9 +217,7 @@ class Game{
   }
 
   BroadCastUpdate(){
-    for (var i = 0; i < this.clients.length; i++) {
-      this.SendData(this.clients[i]);
-    }
+    this.eventEmitter.emit("update", this.players);
   }
 
   SendData(client){
