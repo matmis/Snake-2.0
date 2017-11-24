@@ -193,11 +193,7 @@ class Game{
   }
 
   BroadCastDeath(player){
-    for (var i = 0; i < this.clients.length; i++) {
-      let msg = this.CreateChatMsg("Server", "#FF0000", player.name + " has died in action");
-      this.clients[i].sendUTF(JSON.stringify({type: "message", data: msg}));
-    }
-    this.eventEmitter.emit("Death", player);
+    this.eventEmitter.emit("death", player);
   }
 
   BroadCastEnd(){
