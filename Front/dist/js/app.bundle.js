@@ -113,10 +113,8 @@ var init = function init() {
 };
 
 var setupWebsockets = function setupWebsockets() {
-    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    var socket = io.connect("http://localhost:5000");
-    //connection = new WebSocket('ws://snakews.homenetx.be');
+    var socket = io.connect(location.protocol + "//" + location.host);
 
     socket.emit("message", "tetten");
     socket.on("history", function (data) {
@@ -126,48 +124,38 @@ var setupWebsockets = function setupWebsockets() {
         console.log(data);
     });
 
-    connection = new WebSocket('ws://127.0.0.1:5001');
+    //connection.onmessage = (message)=>{
+    //console.log(message.data);
+    var msg = JSON.parse(message.data);
+    console.log(msg);
+    if (msg.type == "Player" && msg.data.name == txtUser.value) {
+        //console.log(msg.data.name)
+        player = msg.data;
+        //console.log(player);
+        status.innerHTML = player.name + ": ";
+    }
 
-    connection.onopen = function () {
-        //console.log("Opened connection");
-        input.disabled = false;
-    };
+    if (msg.type == "message") {
+        var dt = new Date(msg.data.time);
+        addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+    }
+    if (msg.type == "Player") {
+        showScores(msg.data, false);
+    }
+    if (msg.type == "update") {
+        var players = msg.data;
+        console.log(players);
+        drawSnakes(players);
+        showScores(players, true);
+    }
+    if (msg.type == "end") {
+        initCanvas("Game over...");
+    }
+    if (msg.type == "treat") {
+        treat = msg.data;
+    }
 
-    connection.onerror = function (error) {
-        console.log("Problems with connection...");
-    };
-
-    connection.onmessage = function (message) {
-        //console.log(message.data);
-        var msg = JSON.parse(message.data);
-        console.log(msg);
-        if (msg.type == "Player" && msg.data.name == txtUser.value) {
-            //console.log(msg.data.name)
-            player = msg.data;
-            //console.log(player);
-            status.innerHTML = player.name + ": ";
-        }
-
-        if (msg.type == "message") {
-            var dt = new Date(msg.data.time);
-            addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
-        }
-        if (msg.type == "Player") {
-            showScores(msg.data, false);
-        }
-        if (msg.type == "update") {
-            var players = msg.data;
-            console.log(players);
-            drawSnakes(players);
-            showScores(players, true);
-        }
-        if (msg.type == "end") {
-            initCanvas("Game over...");
-        }
-        if (msg.type == "treat") {
-            treat = msg.data;
-        }
-    };
+    // }
 };
 var showScores = function showScores(players, bool) {
     var bobTheHtmlBuilder = "";

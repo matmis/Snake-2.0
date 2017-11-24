@@ -5,9 +5,10 @@ import Username from "./models/username.class";
 import Player from "./models/Player.class";
 
 let btnSubmit, txtUser;
-let userName, connection;
+let userName;
 
 let content, input, status, myColor, myName;
+let socket;
 let player;
 let gameCanvas;
 let treat = 0;
@@ -20,68 +21,53 @@ const init = ()=>{
 };
 
 const setupWebsockets = ()=>{
-    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    let socket = io.connect("http://localhost:5000");
-    //connection = new WebSocket('ws://snakews.homenetx.be');
+    socket = io.connect(location.protocol + "//" + location.host);
 
-    socket.emit("message", "tetten");
-    socket.on("history", (data) => {
-      console.log(data);
+
+    //socket.emit("message", "tetten");
+    socket.on("Player", (data) => {
+        console.log(data);
+        let msg = JSON.parse(data);
+      if(msg.data.name == txtUser.value)
+      {
+          //console.log(msg.data.name)
+          player = msg.data;
+          //console.log(player);
+          status.innerHTML = player.name + ": ";
+      }
+
+      showScores(msg.data, false);
     });
-    socket.on("message", (data) => {
-      console.log(data);
-    });
 
-    connection = new WebSocket('ws://127.0.0.1:5001');
-
-    connection.onopen = ()=>{
-        //console.log("Opened connection");
-        input.disabled = false;
-    }
-
-    connection.onerror = (error)=> {
-        console.log("Problems with connection...");
-    };
-
-    connection.onmessage = (message)=>{
-        //console.log(message.data);
-        let msg = JSON.parse(message.data);
+    socket.on("message", (data)=>{
+        console.log(data);
+        let msg = data;
         console.log(msg);
-        if(msg.type == "Player" && msg.data.name == txtUser.value)
-        {
-            //console.log(msg.data.name)
-            player = msg.data;
-            //console.log(player);
-            status.innerHTML = player.name + ": ";
-        }
+        let dt = new Date(msg.data.time)
+        addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+    });
 
-        if(msg.type == "message")
-        {
-            let dt = new Date(msg.data.time)
-            addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
-        }
-        if(msg.type == "Player")
-        {
-            showScores(msg.data, false);
-        }
-        if(msg.type == "update")
-        {
-            let players = msg.data;
-            console.log(players);
-            drawSnakes(players);
-            showScores(players, true);
-        }
-        if(msg.type == "end")
-        {
-            initCanvas("Game over...")
-        }
-        if(msg.type == "treat")
-        {
-            treat = msg.data;
-        }
+    socket.on("update", (data)=>{
+        console.log(data);
+        let msg = JSON.parse(data);
+        console.log(msg);
+        let players = msg.data;
+        console.log(players);
+        drawSnakes(players);
+        showScores(players, true);
+    });
 
-    }
+    socket.on("end", (data)=>{
+        console.log(data);
+        initCanvas("Game Over...");
+    });
+
+    socket.on("treat", (data)=>{
+        console.log(data);
+        treat = msg.data;
+    });
+
 
 }
 const showScores = (players, bool)=>{
@@ -172,33 +158,28 @@ const fetchElements = () =>{
             if (!msg) {
                     return;
             }else{
-            let tr = new Transport("chat", msg);
-            connection.send(JSON.stringify(tr));
+            socket.emit("chat", JSON.stringify(msg));
             //console.log(JSON.stringify(tr));
             input.value = "";
             }
         }
         else if(e.keyCode === 37){
             console.log("left");
-            let tr = new Transport("direction", 2);
-            connection.send(JSON.stringify(tr));
+            socket.emit("direction", JSON.stringify(2));
             //console.log(JSON.stringify(tr));
         }
         else if(e.keyCode === 38){
             console.log("up");
-            let tr = new Transport("direction", 0);
-            connection.send(JSON.stringify(tr));
+            socket.emit("direction", JSON.stringify(0));
 
         }
         else if(e.keyCode === 39){
             console.log("right");
-            let tr = new Transport("direction", 3);
-            connection.send(JSON.stringify(tr));
+            socket.emit("direction", JSON.stringify(3));
         }
         else if(e.keyCode === 40){
             console.log("down");
-            let tr = new Transport("direction", 1);
-            connection.send(JSON.stringify(tr));
+            socket.emit("direction", JSON.stringify(1));
         }
     });
 
@@ -234,9 +215,7 @@ const checkNickname = ()=>{
 
 
         userName = new Username(txtUser.value);
-        let tr = new Transport("username", userName);
-        connection.send(JSON.stringify(tr));
-
+        socket.emit("username", JSON.stringify(userName));
 
         startSpelletje();
     }
@@ -252,7 +231,7 @@ const startSpelletje = ()=>{
 
     input.focus();
     initCanvas("Waiting on other players...");
-    checkChat();
+    //checkChat();
 
 };
 
@@ -269,7 +248,7 @@ const initCanvas = (str)=>{
     ctx.fillText(str, gameCanvas.width /2, gameCanvas.height /2);
 }
 
-const checkChat = ()=>{
+/*const checkChat = ()=>{
             setInterval(()=> {
                 if (connection.readyState !== 1) {
                     status.innerHTML = ('Error');
@@ -278,7 +257,7 @@ const checkChat = ()=>{
 
                 }
             }, 3000);
-}
+}*/
 
 const addMessage = (author, message, color, dt) => {
         content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' +

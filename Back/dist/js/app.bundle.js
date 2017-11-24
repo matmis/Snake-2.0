@@ -94,14 +94,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var btnSubmit = void 0,
     txtUser = void 0;
-var userName = void 0,
-    connection = void 0;
+var userName = void 0;
 
 var content = void 0,
     input = void 0,
     status = void 0,
     myColor = void 0,
     myName = void 0;
+var socket = void 0;
 var player = void 0;
 var gameCanvas = void 0;
 var treat = 0;
@@ -113,61 +113,50 @@ var init = function init() {
 };
 
 var setupWebsockets = function setupWebsockets() {
-    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    var socket = io.connect("http://localhost:5000");
-    //connection = new WebSocket('ws://snakews.homenetx.be');
+    socket = io.connect(location.protocol + "//" + location.host);
 
-    socket.emit("message", "tetten");
-    socket.on("history", function (data) {
+    //socket.emit("message", "tetten");
+    socket.on("Player", function (data) {
         console.log(data);
-    });
-    socket.on("message", function (data) {
-        console.log(data);
-    });
-
-    connection = new WebSocket('ws://127.0.0.1:5001');
-
-    connection.onopen = function () {
-        //console.log("Opened connection");
-        input.disabled = false;
-    };
-
-    connection.onerror = function (error) {
-        console.log("Problems with connection...");
-    };
-
-    connection.onmessage = function (message) {
-        //console.log(message.data);
-        var msg = JSON.parse(message.data);
-        console.log(msg);
-        if (msg.type == "Player" && msg.data.name == txtUser.value) {
+        var msg = JSON.parse(data);
+        if (msg.data.name == txtUser.value) {
             //console.log(msg.data.name)
             player = msg.data;
             //console.log(player);
             status.innerHTML = player.name + ": ";
         }
 
-        if (msg.type == "message") {
-            var dt = new Date(msg.data.time);
-            addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
-        }
-        if (msg.type == "Player") {
-            showScores(msg.data, false);
-        }
-        if (msg.type == "update") {
-            var players = msg.data;
-            console.log(players);
-            drawSnakes(players);
-            showScores(players, true);
-        }
-        if (msg.type == "end") {
-            initCanvas("Game over...");
-        }
-        if (msg.type == "treat") {
-            treat = msg.data;
-        }
-    };
+        showScores(msg.data, false);
+    });
+
+    socket.on("message", function (data) {
+        console.log(data);
+        var msg = data;
+        console.log(msg);
+        var dt = new Date(msg.data.time);
+        addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
+    });
+
+    socket.on("update", function (data) {
+        console.log(data);
+        var msg = JSON.parse(data);
+        console.log(msg);
+        var players = msg.data;
+        console.log(players);
+        drawSnakes(players);
+        showScores(players, true);
+    });
+
+    socket.on("end", function (data) {
+        console.log(data);
+        initCanvas("Game Over...");
+    });
+
+    socket.on("treat", function (data) {
+        console.log(data);
+        treat = msg.data;
+    });
 };
 var showScores = function showScores(players, bool) {
     var bobTheHtmlBuilder = "";
@@ -252,28 +241,23 @@ var fetchElements = function fetchElements() {
             if (!msg) {
                 return;
             } else {
-                var tr = new _transport2.default("chat", msg);
-                connection.send(JSON.stringify(tr));
+                socket.emit("chat", JSON.stringify(msg));
                 //console.log(JSON.stringify(tr));
                 input.value = "";
             }
         } else if (e.keyCode === 37) {
             console.log("left");
-            var _tr = new _transport2.default("direction", 2);
-            connection.send(JSON.stringify(_tr));
+            socket.emit("direction", JSON.stringify(2));
             //console.log(JSON.stringify(tr));
         } else if (e.keyCode === 38) {
             console.log("up");
-            var _tr2 = new _transport2.default("direction", 0);
-            connection.send(JSON.stringify(_tr2));
+            socket.emit("direction", JSON.stringify(0));
         } else if (e.keyCode === 39) {
             console.log("right");
-            var _tr3 = new _transport2.default("direction", 3);
-            connection.send(JSON.stringify(_tr3));
+            socket.emit("direction", JSON.stringify(3));
         } else if (e.keyCode === 40) {
             console.log("down");
-            var _tr4 = new _transport2.default("direction", 1);
-            connection.send(JSON.stringify(_tr4));
+            socket.emit("direction", JSON.stringify(1));
         }
     });
 };
@@ -303,8 +287,7 @@ var checkNickname = function checkNickname() {
         console.log("wel goed");
 
         userName = new _username2.default(txtUser.value);
-        var tr = new _transport2.default("username", userName);
-        connection.send(JSON.stringify(tr));
+        socket.emit("username", JSON.stringify(userName));
 
         startSpelletje();
     }
@@ -319,7 +302,7 @@ var startSpelletje = function startSpelletje() {
 
     input.focus();
     initCanvas("Waiting on other players...");
-    checkChat();
+    //checkChat();
 };
 
 var initCanvas = function initCanvas(str) {
@@ -335,15 +318,16 @@ var initCanvas = function initCanvas(str) {
     ctx.fillText(str, gameCanvas.width / 2, gameCanvas.height / 2);
 };
 
-var checkChat = function checkChat() {
-    setInterval(function () {
-        if (connection.readyState !== 1) {
-            status.innerHTML = 'Error';
-            input.disabled = true;
-            input.value = "Unable to comminucate with the WebSocket server";
-        }
-    }, 3000);
-};
+/*const checkChat = ()=>{
+            setInterval(()=> {
+                if (connection.readyState !== 1) {
+                    status.innerHTML = ('Error');
+                    input.disabled = true;
+                    input.value = "Unable to comminucate with the WebSocket server";
+
+                }
+            }, 3000);
+}*/
 
 var addMessage = function addMessage(author, message, color, dt) {
     content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
