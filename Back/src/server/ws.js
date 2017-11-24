@@ -20,7 +20,12 @@ let ws = (socketio) => {
           socket.userName = htmlEntities(username);
           c.GetRandomColor((userc) => {
             socket.userColor = userc;
-            BroadCastChat(socket, socket.userName + " is now connected");
+            CreateChatMsg(socket.userName, socket.userColor, socket.userName + " is now connected", (msg) => {
+              console.log(msg);
+              chatHistory.push(msg);
+              chatHistory.splice(-100);
+              BroadCastChat(socket, msg);
+            });
 
             let p = new Player(socket.userName, socket.userColor);
             game.AddPlayer(p);
@@ -29,6 +34,7 @@ let ws = (socketio) => {
 
         socket.on("chat", (data) => {
           CreateChatMsg(socket.userName, socket.userColor, data, (msg) => {
+            console.log(msg);
             chatHistory.push(msg);
             chatHistory.splice(-100);
             BroadCastChat(socket, msg);
