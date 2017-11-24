@@ -42,7 +42,7 @@ const setupWebsockets = ()=>{
 
     socket.on("message", (data)=>{
         console.log(data);
-        let msg = data;
+        let msg = JSON.parse(data);
         console.log(msg);
         let dt = new Date(msg.data.time)
         addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
@@ -62,8 +62,6 @@ const setupWebsockets = ()=>{
         console.log(data);
         initCanvas("Game Over...");
     });
-    //dsfqdsfdsqf
-
     socket.on("treat", (data)=>{
         console.log(data);
         treat = msg.data;
@@ -215,9 +213,10 @@ const checkNickname = ()=>{
         console.log("wel goed");
 
 
-        userName = new Username(txtUser.value);
+        userName = txtUser.value;
+        console.log(userName);
         socket.emit("username", JSON.stringify(userName));
-
+        console.log(JSON.stringify(userName));
         startSpelletje();
     }
 };

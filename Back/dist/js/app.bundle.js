@@ -132,7 +132,7 @@ var setupWebsockets = function setupWebsockets() {
 
     socket.on("message", function (data) {
         console.log(data);
-        var msg = data;
+        var msg = JSON.parse(data);
         console.log(msg);
         var dt = new Date(msg.data.time);
         addMessage(msg.data.author, msg.data.text, msg.data.color, dt);
@@ -152,8 +152,6 @@ var setupWebsockets = function setupWebsockets() {
         console.log(data);
         initCanvas("Game Over...");
     });
-    //dsfqdsfdsqf
-
     socket.on("treat", function (data) {
         console.log(data);
         treat = msg.data;
@@ -287,9 +285,10 @@ var checkNickname = function checkNickname() {
     } else {
         console.log("wel goed");
 
-        userName = new _username2.default(txtUser.value);
+        userName = txtUser.value;
+        console.log(userName);
         socket.emit("username", JSON.stringify(userName));
-
+        console.log(JSON.stringify(userName));
         startSpelletje();
     }
 };
