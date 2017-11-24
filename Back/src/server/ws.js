@@ -71,7 +71,7 @@ let ws = (socketio) => {
       author: userName,
       color: userColor
     };
-    cb(JSON.stringify(msg));
+    cb(msg);
   };
 
   const SendChatHistory = (socket) => {
