@@ -11,7 +11,6 @@ let ws = (socketio) => {
   let game = new Game(eventEmitter);
   let chatHistory = [];
 
-  chatHistory.push("dummydata");
   io.on("connection", (socket) => {
     console.log(socket + " has connected");
 
@@ -42,7 +41,7 @@ let ws = (socketio) => {
 
         socket.on("close", (socket) => {
           CreateChatMsg(socket.username, socket.userColor, socket.username + " has left the room", (msg) => {
-            
+
           });
         });
       }
@@ -65,7 +64,7 @@ let ws = (socketio) => {
       author: userName,
       color: userColor
     };
-    cb(msg);
+    cb(JSON.stringify(msg));
   };
 
   const SendChatHistory = (socket) => {
