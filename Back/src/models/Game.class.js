@@ -197,9 +197,7 @@ class Game{
   }
 
   BroadCastEnd(){
-    for (var i = 0; i < this.clients.length; i++) {
-      this.clients[i].sendUTF(JSON.stringify({type: "end", data: "true"}));
-    }
+    this.eventEmitter.emit("end", true);
   }
 
   BroadCastUpdate(){

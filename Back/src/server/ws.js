@@ -29,6 +29,7 @@ let ws = (socketio) => {
 
             let p = new Player(socket.userName, socket.userColor);
             game.AddPlayer(p);
+            io.local.emit("player", p);
           });
         });
 
@@ -65,11 +66,13 @@ let ws = (socketio) => {
     io.local.emit("treat", treat);
   });
 
+  eventEmitter.on("end", (value) => {
+    io.local.emit("end", value);
+  });
+
   eventEmitter.on("death", (player) => {
     CreateChatMsg(player.name, player.color, player.name + " has died in action", (msg) => {
-      console.log(msg);
       io.local.emit("message", msg);
-
     });
   });
 
