@@ -17,7 +17,6 @@ let ws = (socketio) => {
     SendChatHistory(socket).then(
       () => {
         socket.on("username", (username) => {
-          // socket.userName = htmlEntities(username);
           socket.userName = username;
           c.GetRandomColor((userc) => {
             socket.userColor = userc;
@@ -48,8 +47,11 @@ let ws = (socketio) => {
 
         socket.on("close", (socket) => {
           CreateChatMsg(socket.username, socket.userColor, socket.username + " has left the room", (msg) => {
-
           });
+        });
+
+        socket.on("disconnect", (data) => {
+          console.log(socket.username + " is now disconnected");
         });
       }
     );
@@ -57,6 +59,10 @@ let ws = (socketio) => {
 
   eventEmitter.on("update", (players) => {
     io.local.emit("update", players);
+  });
+
+  eventEmitter.on("treat", (treat) => {
+    io.local.emit("treat", treat);
   });
 
   const BroadCastChat = (socket, message) => {

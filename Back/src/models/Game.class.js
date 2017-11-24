@@ -227,9 +227,10 @@ class Game{
   }
 
   broadCastTreat(){
-    for (var i = 0; i < this.clients.length; i++) {
-      this.clients[i].sendUTF(JSON.stringify({type: "treat", data: this.treat}));
-    }
+    // for (var i = 0; i < this.clients.length; i++) {
+    //   this.clients[i].sendUTF(JSON.stringify({type: "treat", data: this.treat}));
+    // }
+    this.eventEmitter.emit("treat", this.treat);
   }
 }
 
