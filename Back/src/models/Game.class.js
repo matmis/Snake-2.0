@@ -138,7 +138,7 @@ class Game{
     for (var i = 0; i < c; i++) {
       this.checkPlayer(i, (index, remove) => {
         counter++;
-        //console.log(`player checked. counter = ${counter}. c = ${c}`);
+        console.log(`player checked. counter = ${counter}. c = ${c}`);
         if(remove){
           if(!removeIndexes.includes(index)){
               removeIndexes.push(index);
@@ -185,13 +185,12 @@ class Game{
         for(let z = 0; z < l; z++){
           let targetloc = this.players[t].snake.location[z];
           if(playerhead.x == targetloc.x && playerhead.y == targetloc.y){
-            cb(true);
-          }else{
-            cb(false);
+            return cb(true);
           }
         }
       }
     }
+    return cb(false);
   }
 
   checkIfPlayerHasCollisionWithHimself(playerhead, i, cb){
@@ -199,11 +198,10 @@ class Game{
     for(let t = 1; t < c; t++){
       let targetloc = this.players[i].snake.location[t];
       if(playerhead.x == targetloc.x && playerhead.y == targetloc.y){
-        cb(true);
-      }else{
-        cb(false);
+        return cb(true);
       }
     }
+    return cb(false);
   }
 
   checkIfPlayerIsInsideTheField(playerhead, cb){
