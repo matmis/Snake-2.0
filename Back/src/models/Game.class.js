@@ -138,7 +138,7 @@ class Game{
     for (var i = 0; i < c; i++) {
       this.checkPlayer(i, (index, remove) => {
         counter++;
-        //console.log(`player checked. counter = ${counter}. c = ${c}`);
+        console.log(`player checked. counter = ${counter}. c = ${c}`);
         if(remove){
           if(!removeIndexes.includes(index)){
               removeIndexes.push(index);

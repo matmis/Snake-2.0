@@ -1,14 +1,17 @@
 "use strict";
 
+import * as layout from './services/layout.service';
+
 let btnSubmit, txtUser;
 let userName;
 
-let content, input, status, myColor, myName;
+let chatContent, chatInput, lblstatus, myColor, myName;
 let socket;
 let gameCanvas;
 let treat = 0;
 
 const init = ()=>{
+
     fetchElements();
 
     setupWebsockets();
@@ -101,25 +104,31 @@ const drawSnakes = (players) =>{
 }
 
 const fetchElements = () =>{
-
-    btnSubmit = document.querySelector("#btnSubmit");
+    //textbox username login-screen
     txtUser = document.querySelector("#txtUser");
     txtUser.focus();
+
+    //submit button login-screen
+    btnSubmit = document.querySelector("#btnSubmit");
     btnSubmit.addEventListener("click", ()=>{
         console.log("clicked");
         checkNickname();
     });
 
-    content = document.querySelector("#content");
+    //chatvenster
+    chatContent = document.querySelector("#content");
+    //textbox onder chatvenster
+    chatInput = document.querySelector("#input");
+    //status label voor feedback
+    lblstatus = document.querySelector("#status");
 
-    input = document.querySelector("#input");
-    status = document.querySelector("#status");
-
+    //Canvas van het spel
     gameCanvas = document.querySelector("#theGame");
 
-    positionEverything();
+
+    
     window.addEventListener("resize", (e)=>{
-        positionEverything();
+        layout.positionElements();
     });
 
     window.addEventListener("keydown", (e)=>{
@@ -162,24 +171,8 @@ const fetchElements = () =>{
         }
     });
 
-}
+    layout.positionElements();
 
-const positionEverything = ()=>{
-    console.log("width: ",window.screen.availWidth);
-    console.log("height: ",window.screen.availHeight);
-    let width = 0;
-    if(window.innerWidth < window.innerHeight)
-    {
-        width = 20;
-    }
-    else{
-        width = window.innerHeight - 25 - 15 - 15 - 20 - 15;
-    }
-
-    gameCanvas.width = width;
-    gameCanvas.height = width;
-    console.log("width: ", width);
-    document.querySelector(".chat").style.height = document.querySelector(".game").clientHeight + "px";
 }
 
 const checkNickname = ()=>{
