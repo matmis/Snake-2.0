@@ -10,6 +10,7 @@ let ws = (socketio) => {
   let c = new Colors();
   let game = new Game(eventEmitter);
   let chatHistory = [];
+  let treatSave = undefined;
 
   io.on("connection", (socket) => {
     console.log(socket + " has connected");
@@ -51,6 +52,10 @@ let ws = (socketio) => {
           });
         });
 
+        socket.on("treat", (data) => {
+          socket.emit("treat", treatSave);
+        });
+
         socket.on("disconnect", (data) => {
           console.log(socket.username + " is now disconnected");
         });
@@ -63,6 +68,7 @@ let ws = (socketio) => {
   });
 
   eventEmitter.on("treat", (treat) => {
+    treatSave = treat;
     io.local.emit("treat", treat);
   });
 
