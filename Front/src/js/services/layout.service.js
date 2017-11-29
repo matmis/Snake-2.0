@@ -1,4 +1,5 @@
 export function positionElements(){
+    let gameCanvas = document.querySelector("#theGame");
     //console.log("width: ",window.screen.availWidth);
     //console.log("height: ",window.screen.availHeight);
     let width = 0;
