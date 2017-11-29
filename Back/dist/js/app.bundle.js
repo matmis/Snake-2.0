@@ -68,7 +68,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(1);
-module.exports = __webpack_require__(7);
+module.exports = __webpack_require__(2);
 
 
 /***/ }),
@@ -77,20 +77,6 @@ module.exports = __webpack_require__(7);
 
 "use strict";
 
-
-var _transport = __webpack_require__(2);
-
-var _transport2 = _interopRequireDefault(_transport);
-
-var _username = __webpack_require__(3);
-
-var _username2 = _interopRequireDefault(_username);
-
-var _Player = __webpack_require__(4);
-
-var _Player2 = _interopRequireDefault(_Player);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var btnSubmit = void 0,
     txtUser = void 0;
@@ -102,7 +88,6 @@ var content = void 0,
     myColor = void 0,
     myName = void 0;
 var socket = void 0;
-var player = void 0;
 var gameCanvas = void 0;
 var treat = 0;
 
@@ -116,17 +101,9 @@ var setupWebsockets = function setupWebsockets() {
 
     socket = io.connect(location.protocol + "//" + location.host);
 
-    //socket.emit("message", "tetten");
-    socket.on("Player", function (data) {
-        console.log("Player: ", data);
-        if (data.name == txtUser.value) {
-            //console.log(msg.data.name)
-            player = msg.data;
-            //console.log(player);
-            status.innerHTML = player.name + ": ";
-        }
-
-        showScores(msg.data, false);
+    socket.on("player", function (data) {
+        console.log("player: ", data);
+        showScores(data, false);
     });
 
     socket.on("message", function (data) {
@@ -149,7 +126,7 @@ var setupWebsockets = function setupWebsockets() {
     });
     socket.on("treat", function (data) {
         console.log(data);
-        treat = msg.data;
+        treat = data;
     });
 };
 var showScores = function showScores(players, bool) {
@@ -241,17 +218,17 @@ var fetchElements = function fetchElements() {
             }
         } else if (e.keyCode === 37) {
             console.log("left");
-            socket.emit("direction", JSON.stringify(2));
+            socket.emit("direction", 2);
             //console.log(JSON.stringify(tr));
         } else if (e.keyCode === 38) {
             console.log("up");
-            socket.emit("direction", JSON.stringify(0));
+            socket.emit("direction", 0);
         } else if (e.keyCode === 39) {
             console.log("right");
-            socket.emit("direction", JSON.stringify(3));
+            socket.emit("direction", 3);
         } else if (e.keyCode === 40) {
             console.log("down");
-            socket.emit("direction", JSON.stringify(1));
+            socket.emit("direction", 1);
         }
     });
 };
@@ -282,6 +259,7 @@ var checkNickname = function checkNickname() {
 
         userName = txtUser.value;
         socket.emit("username", userName);
+
         startSpelletje();
     }
 };
@@ -292,7 +270,7 @@ var startSpelletje = function startSpelletje() {
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
     document.querySelector(".players").style.visibility = "visible";
-
+    status.innerHTML = userName;
     input.focus();
     initCanvas("Waiting on other players...");
     //checkChat();
@@ -331,209 +309,6 @@ init();
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Transport = function () {
-  function Transport(model, data) {
-    _classCallCheck(this, Transport);
-
-    this.model = model;
-    this.data = data;
-  }
-
-  _createClass(Transport, null, [{
-    key: "SendString",
-    value: function SendString(model, data) {
-      //model = waarop we gaan fileteren
-      //data = inhoud van het model
-      var m = model,
-          d = data;
-      var ts = {
-        model: m,
-        data: d
-      };
-      return JSON.stringify(ts);
-      //console.log(ts);
-    }
-  }]);
-
-  return Transport;
-}();
-
-exports.default = Transport;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var UserName = function UserName(username) {
-  _classCallCheck(this, UserName);
-
-  this.username = username;
-};
-
-exports.default = UserName;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _Snake = __webpack_require__(5);
-
-var _Snake2 = _interopRequireDefault(_Snake);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Player = function Player(name, color) {
-  _classCallCheck(this, Player);
-
-  this.name = name;
-  this.snake = new _Snake2.default();
-  this.color = color;
-};
-
-exports.default = Player;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Pos = __webpack_require__(6);
-
-var _Pos2 = _interopRequireDefault(_Pos);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Snake = function () {
-  function Snake() {
-    _classCallCheck(this, Snake);
-
-    this.directions = {
-      UP: 0,
-      DOWN: 1,
-      LEFT: 2,
-      RIGHT: 3
-    };
-
-    this.location = [];
-
-    this.direction = this.directions.RIGHT;
-
-    this.location.push(new _Pos2.default(0, 0));
-    this.location.push(new _Pos2.default(-1, 0));
-    this.location.push(new _Pos2.default(-2, 0));
-    this.location.push(new _Pos2.default(-3, 0));
-  }
-
-  _createClass(Snake, [{
-    key: "GameTick",
-    value: function GameTick() {
-      var head = void 0;
-      switch (this.direction) {
-        case this.directions.UP:
-          head = new _Pos2.default(this.location[0].x, this.location[0].y + 1);
-          break;
-        case this.directions.DOWN:
-          head = new _Pos2.default(this.location[0].x, this.location[0].y - 1);
-          break;
-        case this.directions.LEFT:
-          head = new _Pos2.default(this.location[0].x - 1, this.location[0].y);
-          break;
-        case this.directions.RIGHT:
-          head = new _Pos2.default(this.location[0].x + 1, this.location[0].y);
-          break;
-        default:
-      }
-      this.location.splice(0, 0, head);
-      this.location.splice(this.location.length - 1, 1);
-    }
-  }]);
-
-  return Snake;
-}();
-
-exports.default = Snake;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Pos = function () {
-  function Pos(x, y) {
-    _classCallCheck(this, Pos);
-
-    this.x = x;
-    this.y = y;
-  }
-
-  _createClass(Pos, [{
-    key: "toJSON",
-    value: function toJSON() {
-      var x = this.x,
-          y = this.y;
-
-      return { x: x, y: y };
-    }
-  }]);
-
-  return Pos;
-}();
-
-exports.default = Pos;
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

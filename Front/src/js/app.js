@@ -1,15 +1,10 @@
 "use strict";
 
-import Transport from "./models/transport.class";
-import Username from "./models/username.class";
-import Player from "./models/Player.class";
-
 let btnSubmit, txtUser;
 let userName;
 
 let content, input, status, myColor, myName;
 let socket;
-let player;
 let gameCanvas;
 let treat = 0;
 
@@ -24,19 +19,9 @@ const setupWebsockets = ()=>{
 
     socket = io.connect(location.protocol + "//" + location.host);
 
-
-    //socket.emit("message", "tetten");
-    socket.on("Player", (data) => {
-    console.log("Player: ",data);
-      if(data.name == txtUser.value)
-      {
-          //console.log(msg.data.name)
-          player = msg.data;
-          //console.log(player);
-          status.innerHTML = player.name + ": ";
-      }
-
-      showScores(msg.data, false);
+    socket.on("player", (data) => {
+    console.log("player: ",data);
+      showScores(data, false);
     });
 
     socket.on("message", (data)=>{
@@ -59,7 +44,7 @@ const setupWebsockets = ()=>{
     });
     socket.on("treat", (data)=>{
         console.log(data);
-        treat = msg.data;
+        treat = data;
     });
 
 
@@ -159,21 +144,21 @@ const fetchElements = () =>{
         }
         else if(e.keyCode === 37){
             console.log("left");
-            socket.emit("direction", JSON.stringify(2));
+            socket.emit("direction", 2);
             //console.log(JSON.stringify(tr));
         }
         else if(e.keyCode === 38){
             console.log("up");
-            socket.emit("direction", JSON.stringify(0));
+            socket.emit("direction", 0);
 
         }
         else if(e.keyCode === 39){
             console.log("right");
-            socket.emit("direction", JSON.stringify(3));
+            socket.emit("direction", 3);
         }
         else if(e.keyCode === 40){
             console.log("down");
-            socket.emit("direction", JSON.stringify(1));
+            socket.emit("direction", 1);
         }
     });
 
@@ -210,6 +195,7 @@ const checkNickname = ()=>{
 
         userName = txtUser.value;
         socket.emit("username", userName);
+
         startSpelletje();
     }
 };
@@ -221,7 +207,7 @@ const startSpelletje = ()=>{
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
     document.querySelector(".players").style.visibility = "visible";
-
+    status.innerHTML = userName;
     input.focus();
     initCanvas("Waiting on other players...");
     //checkChat();
