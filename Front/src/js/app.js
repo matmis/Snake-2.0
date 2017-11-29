@@ -17,7 +17,7 @@ let treat = 0;
 
 const init = ()=>{
     fetchElements();
-    socket = new Socket();
+    socket = new Socket(treat);
 };
 
 const fetchElements = () =>{

@@ -111,7 +111,7 @@ var treat = 0;
 
 var init = function init() {
     fetchElements();
-    socket = new _Socket2.default();
+    socket = new _Socket2.default(treat);
 };
 
 var fetchElements = function fetchElements() {
@@ -243,16 +243,18 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Socket = function () {
-    function Socket() {
+    function Socket(treat) {
         _classCallCheck(this, Socket);
 
         this.socket = io.connect(location.protocol + "//" + location.host);
         this.socketListener();
+        this.treat = treat;
     }
 
     _createClass(Socket, [{
         key: 'socketListener',
         value: function socketListener() {
+            var _this = this;
 
             this.socket.on("player", function (data) {
                 console.log("player: ", data);
@@ -266,10 +268,10 @@ var Socket = function () {
             });
 
             this.socket.on("update", function (data) {
-                console.log(data);
+                console.log("update: ", data);
                 var players = data;
                 console.log(players);
-                canvas.drawSnakes(players);
+                canvas.drawSnakes(players, _this.treat);
                 score.show(players, true);
             });
 
@@ -279,8 +281,8 @@ var Socket = function () {
             });
 
             this.socket.on("treat", function (data) {
-                console.log(data);
-                //treat = data;
+                console.log("treat: ", data);
+                _this.treat = data;
             });
         }
     }, {
@@ -382,7 +384,7 @@ function drawText(tekst) {
 
     ctx.fillText(tekst, gameCanvas.width / 2, gameCanvas.height / 2);
 }
-function drawSnakes(players) {
+function drawSnakes(players, treat) {
     var gameCanvas = document.querySelector("#theGame");
     var ctx = gameCanvas.getContext("2d");
     var factor = gameCanvas.clientWidth / 100;
