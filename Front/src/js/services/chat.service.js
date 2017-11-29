@@ -1,5 +1,3 @@
-import Socket from '../models/Socket.class';
-
 export function addMessage(author, message, color, dt){
     content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' +
          + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
@@ -26,4 +24,18 @@ export function checkNickname(userName, socket){
 
 
     
+}
+
+
+
+
+export function checkChat(socket, userName){
+            setInterval(()=> {
+                console.log(socket.socket.io.readyState);
+                if (socket.socket.io.readyState != "open") {
+                    document.querySelector("#status").innerHTML = ('Error');
+                    document.querySelector("#input").disabled = true;
+                    document.querySelector("#input").value = "Connection lost...";
+                }
+            }, 1000);
 }

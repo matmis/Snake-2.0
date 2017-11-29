@@ -7,7 +7,7 @@ export default class Socket {
     constructor(treat) {
         this.socket = io.connect(location.protocol + "//" + location.host);
         this.socketListener();
-        this.treat = treat;
+        this.treat = 0;
     }
 
     socketListener(){

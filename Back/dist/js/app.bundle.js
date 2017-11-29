@@ -107,11 +107,10 @@ var txtInput = void 0;
 
 //game
 var socket = void 0;
-var treat = 0;
 
 var init = function init() {
     fetchElements();
-    socket = new _Socket2.default(treat);
+    socket = new _Socket2.default();
 };
 
 var fetchElements = function fetchElements() {
@@ -163,22 +162,12 @@ var fetchElements = function fetchElements() {
 
 var login = function login() {
     chat.checkNickname(txtUser.value, socket).then(game.start, loginError);
+    chat.checkChat(socket, txtUser.value);
 };
 
 var loginError = function loginError(error) {
     document.querySelector("#loginerror").innerHTML = error;
 };
-
-/*const checkChat = ()=>{
-            setInterval(()=> {
-                if (connection.readyState !== 1) {
-                    status.innerHTML = ('Error');
-                    input.disabled = true;
-                    input.value = "Unable to comminucate with the WebSocket server";
-
-                }
-            }, 3000);
-}*/
 
 init();
 
@@ -248,7 +237,7 @@ var Socket = function () {
 
         this.socket = io.connect(location.protocol + "//" + location.host);
         this.socketListener();
-        this.treat = treat;
+        this.treat = 0;
     }
 
     _createClass(Socket, [{
@@ -309,13 +298,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.addMessage = addMessage;
 exports.checkNickname = checkNickname;
-
-var _Socket = __webpack_require__(3);
-
-var _Socket2 = _interopRequireDefault(_Socket);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
+exports.checkChat = checkChat;
 function addMessage(author, message, color, dt) {
     content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
     content.scrollTop = content.scrollHeight;
@@ -333,6 +316,17 @@ function checkNickname(userName, socket) {
             ok(userName);
         }
     });
+}
+
+function checkChat(socket, userName) {
+    setInterval(function () {
+        console.log(socket.socket.io.readyState);
+        if (socket.socket.io.readyState != "open") {
+            document.querySelector("#status").innerHTML = 'Error';
+            document.querySelector("#input").disabled = true;
+            document.querySelector("#input").value = "Connection lost...";
+        }
+    }, 1000);
 }
 
 /***/ }),

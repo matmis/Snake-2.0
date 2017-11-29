@@ -13,11 +13,11 @@ let txtInput;
 
 //game
 let socket;
-let treat = 0;
 
 const init = ()=>{
     fetchElements();
-    socket = new Socket(treat);
+    socket = new Socket();
+    
 };
 
 const fetchElements = () =>{
@@ -74,26 +74,11 @@ const fetchElements = () =>{
 
 const login = ()=>{
     chat.checkNickname(txtUser.value, socket).then(game.start, loginError);
+    chat.checkChat(socket, txtUser.value);
 }
 
 const loginError = (error)=>{
     document.querySelector("#loginerror").innerHTML = error;
 }
-
-
-
-
-/*const checkChat = ()=>{
-            setInterval(()=> {
-                if (connection.readyState !== 1) {
-                    status.innerHTML = ('Error');
-                    input.disabled = true;
-                    input.value = "Unable to comminucate with the WebSocket server";
-
-                }
-            }, 3000);
-}*/
-
-
 
 init();
