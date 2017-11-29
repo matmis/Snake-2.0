@@ -2,21 +2,22 @@
 
 import * as layout from './services/layout.service';
 import Socket from './models/Socket.class';
+import * as chat from './services/chat.service';
+import * as game from './services/game.service';
 
+//login-screen
 let btnSubmit, txtUser;
-let userName;
 
-let chatContent, chatInput, lblstatus, myColor, myName;
+//chatbox
+let txtInput;
+
+//game
 let socket;
-let gameCanvas;
 let treat = 0;
 
 const init = ()=>{
-
     fetchElements();
-
     socket = new Socket();
-
 };
 
 const fetchElements = () =>{
@@ -28,62 +29,42 @@ const fetchElements = () =>{
     btnSubmit = document.querySelector("#btnSubmit");
     btnSubmit.addEventListener("click", ()=>{
         console.log("clicked");
-        checkNickname();
+        login();
     });
 
-    //chatvenster
-    chatContent = document.querySelector("#content");
-    //textbox onder chatvenster
-    chatInput = document.querySelector("#input");
-    //status label voor feedback
-    lblstatus = document.querySelector("#status");
+    //input field of chatbox
+    txtInput = document.querySelector("#input");
 
-    //Canvas van het spel
-    gameCanvas = document.querySelector("#theGame");
-
-
-    
+    //On resize, repostion the canvas
     window.addEventListener("resize", (e)=>{
         layout.positionElements();
     });
 
+    //Eventlisteners for the game + chat
     window.addEventListener("keydown", (e)=>{
-        //console.log(e.keyCode);
         if (e.keyCode === 13) {
-            console.log("enter");
-
             if(document.querySelector(".login-screen").style.visibility == "visible"){
-                console.log("test");
-                checkNickname();
+                login();
                 return;
             }
-
-            var msg = input.value;
-            if (!msg) {
+            if (!txtInput.value) {
                     return;
             }else{
-            socket.emit("chat", msg);
-            //console.log(JSON.stringify(tr));
+            socket.send("chat", txtInput.value);
             input.value = "";
             }
         }
         else if(e.keyCode === 37){
-            console.log("left");
-            socket.emit("direction", 2);
-            //console.log(JSON.stringify(tr));
+            socket.send("direction", 2);
         }
         else if(e.keyCode === 38){
-            console.log("up");
-            socket.emit("direction", 0);
-
+            socket.send("direction", 0);
         }
         else if(e.keyCode === 39){
-            console.log("right");
-            socket.emit("direction", 3);
+            socket.send("direction", 3);
         }
         else if(e.keyCode === 40){
-            console.log("down");
-            socket.emit("direction", 1);
+            socket.send("direction", 1);
         }
     });
 
@@ -91,37 +72,14 @@ const fetchElements = () =>{
 
 }
 
-const checkNickname = ()=>{
-    let regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
+const login = ()=>{
+    chat.checkNickname(txtUser.value, socket).then(game.start, loginError);
+}
 
-    if(!regex.test(txtUser.value))
-    {
-        document.querySelector("#loginerror").innerHTML = "Only alphanumeric characters allowed!";
-    }
-    else{
-        console.log("wel goed");
+const loginError = (error)=>{
+    document.querySelector("#loginerror").innerHTML = error;
+}
 
-
-        userName = txtUser.value;
-        socket.emit("username", userName);
-
-        startSpelletje();
-    }
-};
-
-
-const startSpelletje = ()=>{
-    console.log("start");
-    document.querySelector(".login-screen").style.visibility = "hidden";
-    document.querySelector(".chat").style.visibility = "visible";
-    document.querySelector(".game").style.visibility = "visible";
-    document.querySelector(".players").style.visibility = "visible";
-    status.innerHTML = userName;
-    input.focus();
-    initCanvas("Waiting on other players...");
-    //checkChat();
-
-};
 
 
 

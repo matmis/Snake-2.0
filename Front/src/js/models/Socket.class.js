@@ -6,7 +6,7 @@ export default class Socket {
 
     constructor() {
         this.socket = io.connect(location.protocol + "//" + location.host);
-        socketListener();
+        this.socketListener();
     }
 
     socketListener(){
@@ -37,14 +37,11 @@ export default class Socket {
 
         this.socket.on("treat", (data) => {
             console.log(data);
-            treat = data;
+            //treat = data;
         });
     }
 
-
-
-
-
-
-
+    send(header, message){
+        this.socket.emit(header, message);
+    }
 }
