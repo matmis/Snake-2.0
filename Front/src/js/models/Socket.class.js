@@ -4,9 +4,10 @@ import * as canvas from '../services/canvas.service';
 
 export default class Socket {
 
-    constructor() {
+    constructor(treat) {
         this.socket = io.connect(location.protocol + "//" + location.host);
-        socketListener();
+        this.socketListener();
+        this.treat = 0;
     }
 
     socketListener(){
@@ -23,10 +24,10 @@ export default class Socket {
         });
 
         this.socket.on("update", (data) => {
-            console.log(data);
+            console.log("update: ", data);
             let players = data;
             console.log(players);
-            canvas.drawSnakes(players);
+            canvas.drawSnakes(players, this.treat);
             score.show(players, true);
         });
 
@@ -36,15 +37,12 @@ export default class Socket {
         });
 
         this.socket.on("treat", (data) => {
-            console.log(data);
-            treat = data;
+            console.log("treat: ", data);
+            this.treat = data;
         });
     }
 
-
-
-
-
-
-
+    send(header, message){
+        this.socket.emit(header, message);
+    }
 }

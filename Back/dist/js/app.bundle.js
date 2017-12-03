@@ -86,27 +86,30 @@ var _Socket = __webpack_require__(3);
 
 var _Socket2 = _interopRequireDefault(_Socket);
 
+var _chat = __webpack_require__(4);
+
+var chat = _interopRequireWildcard(_chat);
+
+var _game = __webpack_require__(9);
+
+var game = _interopRequireWildcard(_game);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+//login-screen
 var btnSubmit = void 0,
     txtUser = void 0;
-var userName = void 0;
 
-var chatContent = void 0,
-    chatInput = void 0,
-    lblstatus = void 0,
-    myColor = void 0,
-    myName = void 0;
+//chatbox
+var txtInput = void 0;
+
+//game
 var socket = void 0;
-var gameCanvas = void 0;
-var treat = 0;
 
 var init = function init() {
-
     fetchElements();
-
     socket = new _Socket2.default();
 };
 
@@ -119,98 +122,52 @@ var fetchElements = function fetchElements() {
     btnSubmit = document.querySelector("#btnSubmit");
     btnSubmit.addEventListener("click", function () {
         console.log("clicked");
-        checkNickname();
+        login();
     });
 
-    //chatvenster
-    chatContent = document.querySelector("#content");
-    //textbox onder chatvenster
-    chatInput = document.querySelector("#input");
-    //status label voor feedback
-    lblstatus = document.querySelector("#status");
+    //input field of chatbox
+    txtInput = document.querySelector("#input");
 
-    //Canvas van het spel
-    gameCanvas = document.querySelector("#theGame");
-
+    //On resize, repostion the canvas
     window.addEventListener("resize", function (e) {
         layout.positionElements();
     });
 
+    //Eventlisteners for the game + chat
     window.addEventListener("keydown", function (e) {
-        //console.log(e.keyCode);
         if (e.keyCode === 13) {
-            console.log("enter");
-
             if (document.querySelector(".login-screen").style.visibility == "visible") {
-                console.log("test");
-                checkNickname();
+                login();
                 return;
             }
-
-            var msg = input.value;
-            if (!msg) {
+            if (!txtInput.value) {
                 return;
             } else {
-                socket.emit("chat", msg);
-                //console.log(JSON.stringify(tr));
+                socket.send("chat", txtInput.value);
                 input.value = "";
             }
         } else if (e.keyCode === 37) {
-            console.log("left");
-            socket.emit("direction", 2);
-            //console.log(JSON.stringify(tr));
+            socket.send("direction", 2);
         } else if (e.keyCode === 38) {
-            console.log("up");
-            socket.emit("direction", 0);
+            socket.send("direction", 0);
         } else if (e.keyCode === 39) {
-            console.log("right");
-            socket.emit("direction", 3);
+            socket.send("direction", 3);
         } else if (e.keyCode === 40) {
-            console.log("down");
-            socket.emit("direction", 1);
+            socket.send("direction", 1);
         }
     });
 
     layout.positionElements();
 };
 
-var checkNickname = function checkNickname() {
-    var regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
-
-    if (!regex.test(txtUser.value)) {
-        document.querySelector("#loginerror").innerHTML = "Only alphanumeric characters allowed!";
-    } else {
-        console.log("wel goed");
-
-        userName = txtUser.value;
-        socket.emit("username", userName);
-
-        startSpelletje();
-    }
+var login = function login() {
+    chat.checkNickname(txtUser.value, socket).then(game.start, loginError);
+    chat.checkChat(socket, txtUser.value);
 };
 
-var startSpelletje = function startSpelletje() {
-    console.log("start");
-    document.querySelector(".login-screen").style.visibility = "hidden";
-    document.querySelector(".chat").style.visibility = "visible";
-    document.querySelector(".game").style.visibility = "visible";
-    document.querySelector(".players").style.visibility = "visible";
-    status.innerHTML = userName;
-    input.focus();
-    initCanvas("Waiting on other players...");
-    //checkChat();
+var loginError = function loginError(error) {
+    document.querySelector("#loginerror").innerHTML = error;
 };
-
-/*const checkChat = ()=>{
-            setInterval(()=> {
-                if (connection.readyState !== 1) {
-                    status.innerHTML = ('Error');
-                    input.disabled = true;
-                    input.value = "Unable to comminucate with the WebSocket server";
-
-                }
-            }, 3000);
-}*/
 
 init();
 
@@ -275,16 +232,18 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Socket = function () {
-    function Socket() {
+    function Socket(treat) {
         _classCallCheck(this, Socket);
 
         this.socket = io.connect(location.protocol + "//" + location.host);
-        socketListener();
+        this.socketListener();
+        this.treat = 0;
     }
 
     _createClass(Socket, [{
         key: 'socketListener',
         value: function socketListener() {
+            var _this = this;
 
             this.socket.on("player", function (data) {
                 console.log("player: ", data);
@@ -298,10 +257,10 @@ var Socket = function () {
             });
 
             this.socket.on("update", function (data) {
-                console.log(data);
+                console.log("update: ", data);
                 var players = data;
                 console.log(players);
-                canvas.drawSnakes(players);
+                canvas.drawSnakes(players, _this.treat);
                 score.show(players, true);
             });
 
@@ -311,9 +270,14 @@ var Socket = function () {
             });
 
             this.socket.on("treat", function (data) {
-                console.log(data);
-                treat = data;
+                console.log("treat: ", data);
+                _this.treat = data;
             });
+        }
+    }, {
+        key: 'send',
+        value: function send(header, message) {
+            this.socket.emit(header, message);
         }
     }]);
 
@@ -330,12 +294,39 @@ exports.default = Socket;
 
 
 Object.defineProperty(exports, "__esModule", {
-     value: true
+    value: true
 });
 exports.addMessage = addMessage;
+exports.checkNickname = checkNickname;
+exports.checkChat = checkChat;
 function addMessage(author, message, color, dt) {
-     content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
-     content.scrollTop = content.scrollHeight;
+    content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
+    content.scrollTop = content.scrollHeight;
+}
+
+function checkNickname(userName, socket) {
+
+    return new Promise(function (ok, nok) {
+        var regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
+
+        if (!regex.test(userName)) {
+            nok("Only alphanumeric characters allowed!");
+        } else {
+            socket.send("username", userName);
+            ok(userName);
+        }
+    });
+}
+
+function checkChat(socket, userName) {
+    setInterval(function () {
+        console.log(socket.socket.io.readyState);
+        if (socket.socket.io.readyState != "open") {
+            document.querySelector("#status").innerHTML = 'Error';
+            document.querySelector("#input").disabled = true;
+            document.querySelector("#input").value = "Connection lost...";
+        }
+    }, 1000);
 }
 
 /***/ }),
@@ -387,8 +378,7 @@ function drawText(tekst) {
 
     ctx.fillText(tekst, gameCanvas.width / 2, gameCanvas.height / 2);
 }
-
-function drawSnakes(players) {
+function drawSnakes(players, treat) {
     var gameCanvas = document.querySelector("#theGame");
     var ctx = gameCanvas.getContext("2d");
     var factor = gameCanvas.clientWidth / 100;
@@ -427,6 +417,35 @@ function drawSnakes(players) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 8 */,
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.start = start;
+
+var _canvas = __webpack_require__(6);
+
+var canvas = _interopRequireWildcard(_canvas);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function start(userName) {
+    document.querySelector(".login-screen").style.visibility = "hidden";
+    document.querySelector(".chat").style.visibility = "visible";
+    document.querySelector(".game").style.visibility = "visible";
+    document.querySelector(".players").style.visibility = "visible";
+    document.querySelector("#status").innerHTML = userName;
+    document.querySelector("#input").focus();
+    canvas.drawText("Waiting on other players...");
+};
 
 /***/ })
 /******/ ]);

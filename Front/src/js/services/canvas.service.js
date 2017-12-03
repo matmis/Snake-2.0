@@ -11,9 +11,7 @@ export function drawText(tekst){
 
     ctx.fillText(tekst, gameCanvas.width /2, gameCanvas.height /2);
 }
-
-
-export function drawSnakes(players){
+export function drawSnakes(players, treat){
     let gameCanvas = document.querySelector("#theGame");
     let ctx = gameCanvas.getContext("2d");
     let factor = gameCanvas.clientWidth / 100;
