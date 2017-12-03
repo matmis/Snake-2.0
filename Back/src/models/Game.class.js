@@ -60,7 +60,7 @@ class Game{
   Start(){
     if(!this.play && this.players.length >= 2){
       this.play = true;
-      this.treat = new treat();
+      this.treats = new treat();
       this.broadCastTreat();
       console.log("Start Game");
       this.Main();
@@ -127,8 +127,26 @@ class Game{
         }
       }
       //TODO remove de mensen in removeIndexes en Check of de speler op de treat staat;
-      cb();
+      this.checkTreats(() => {
+        cb();
+      });
     });
+  }
+
+  checkTreats(cb){
+    for (let i = 0; i < this.players.length; i++) {
+      let head = this.players[i].snake.location[0];
+      for (let j = 0; j < this.treats.treats.length; j++) {
+        let treat = this.treats.treats[j];
+        if(treat.x == head.x && treat.y == head.y){
+          this.treats.CreateNewTreat(j);
+          this.broadCastTreat();
+          this.players[i].snake.Grow();
+          this.players[i].score++;
+        }
+      }
+    }
+    cb();
   }
 
   checkPlayers(cb){
@@ -312,7 +330,7 @@ class Game{
   }
 
   broadCastTreat(){
-    this.eventEmitter.emit("treat", this.treat);
+    this.eventEmitter.emit("treat", this.treats);
   }
 }
 
