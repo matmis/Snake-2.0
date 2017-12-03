@@ -93,7 +93,7 @@ class Game{
           }
           console.log("snakes updated");
           this.checkSnakes(() => {
-
+            this.BroadCastUpdate();
             console.log("snakes checked");
             this.checkAmountOfPlayers();
           });
