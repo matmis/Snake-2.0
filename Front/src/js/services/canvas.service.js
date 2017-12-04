@@ -38,10 +38,16 @@ export function drawSnakes(players, treat){
     if(treat != 0){
         //console.log("tekenen");
         ctx.fillStyle = treat.color;
-        ctx.beginPath();
-        ctx.arc((treat.pos.x * factor) + factor/2, (treat.pos.y * factor) + factor/2, factor/2, 0,2*Math.PI);
-        ctx.fill();
-        ctx.closePath();
+        console.log("treatje")
+        for(let i = 0; i < treat.treats.length; i++)
+        {
+            console.log("teat " + i);
+            ctx.beginPath();
+            ctx.arc((treat.treats[i].x * factor) + factor/2, (treat.treats[i].y * factor) + factor/2, factor/2, 0,2*Math.PI);
+            ctx.fill();
+            ctx.closePath();
+        }
+
     }
 
 

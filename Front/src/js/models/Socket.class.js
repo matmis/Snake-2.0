@@ -1,6 +1,7 @@
 import * as chat from '../services/chat.service';
 import * as score from '../services/score.service';
 import * as canvas from '../services/canvas.service';
+import * as game from '../services/game.service';
 
 export default class Socket {
 
@@ -32,8 +33,8 @@ export default class Socket {
         });
 
         this.socket.on("end", (data) => {
-            console.log(data);
-            canvas.drawText("Game Over...");
+            console.log("end:" + data);
+            game.restart(this, "Arne");
         });
 
         this.socket.on("treat", (data) => {

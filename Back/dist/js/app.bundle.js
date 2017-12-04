@@ -60,16 +60,51 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(1);
-module.exports = __webpack_require__(7);
+"use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.addMessage = addMessage;
+exports.checkNickname = checkNickname;
+exports.checkChat = checkChat;
+function addMessage(author, message, color, dt) {
+    content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
+    content.scrollTop = content.scrollHeight;
+}
+
+function checkNickname(userName, socket) {
+
+    return new Promise(function (ok, nok) {
+        var regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
+
+        if (!regex.test(userName)) {
+            nok("Only alphanumeric characters allowed!");
+        } else {
+            socket.send("username", userName);
+            ok(userName);
+        }
+    });
+}
+
+function checkChat(socket, userName) {
+    setInterval(function () {
+        //console.log(socket.socket.io.readyState);
+        if (socket.socket.io.readyState != "open") {
+            document.querySelector("#status").innerHTML = 'Error';
+            document.querySelector("#input").disabled = true;
+            document.querySelector("#input").value = "Connection lost...";
+        }
+    }, 1000);
+}
 
 /***/ }),
 /* 1 */
@@ -78,19 +113,90 @@ module.exports = __webpack_require__(7);
 "use strict";
 
 
-var _layout = __webpack_require__(2);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.drawText = drawText;
+exports.drawSnakes = drawSnakes;
+function drawText(tekst) {
+    var gameCanvas = document.querySelector("#theGame");
+    var ctx = gameCanvas.getContext("2d");
+    ctx.canvas.width = gameCanvas.clientWidth;
+    ctx.canvas.height = gameCanvas.clientHeight;
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    ctx.fillStyle = "#FFF";
+    ctx.font = "2em Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText(tekst, gameCanvas.width / 2, gameCanvas.height / 2);
+}
+function drawSnakes(players, treat) {
+    var gameCanvas = document.querySelector("#theGame");
+    var ctx = gameCanvas.getContext("2d");
+    var factor = gameCanvas.clientWidth / 100;
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    for (var i = 0; i < players.length; i++) {
+        var color = players[i].color;
+        var snake = players[i].snake.location;
+        ctx.fillStyle = color;
+        for (var y = 0; y < snake.length; y++) {
+            var drawX = void 0,
+                drawY = void 0;
+            drawX = snake[y].x * factor + factor / 2;
+            drawY = snake[y].y * factor + factor / 2;
+            ctx.beginPath();
+            ctx.arc(drawX, drawY, factor / 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
+            //console.log("drawX: " + drawX);
+            //console.log("drawY: ", drawY);
+            //console.log("y: " + y);
+        }
+    }
+
+    if (treat != 0) {
+        //console.log("tekenen");
+        ctx.fillStyle = treat.color;
+        console.log("treatje");
+        for (var _i = 0; _i < treat.treats.length; _i++) {
+            console.log("teat " + _i);
+            ctx.beginPath();
+            ctx.arc(treat.treats[_i].x * factor + factor / 2, treat.treats[_i].y * factor + factor / 2, factor / 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(3);
+module.exports = __webpack_require__(8);
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _layout = __webpack_require__(4);
 
 var layout = _interopRequireWildcard(_layout);
 
-var _Socket = __webpack_require__(3);
+var _Socket = __webpack_require__(5);
 
 var _Socket2 = _interopRequireDefault(_Socket);
 
-var _chat = __webpack_require__(4);
+var _chat = __webpack_require__(0);
 
 var chat = _interopRequireWildcard(_chat);
 
-var _game = __webpack_require__(9);
+var _game = __webpack_require__(7);
 
 var game = _interopRequireWildcard(_game);
 
@@ -172,7 +278,7 @@ var loginError = function loginError(error) {
 init();
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -203,7 +309,7 @@ function positionElements() {
 }
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -215,17 +321,21 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chat = __webpack_require__(4);
+var _chat = __webpack_require__(0);
 
 var chat = _interopRequireWildcard(_chat);
 
-var _score = __webpack_require__(5);
+var _score = __webpack_require__(6);
 
 var score = _interopRequireWildcard(_score);
 
-var _canvas = __webpack_require__(6);
+var _canvas = __webpack_require__(1);
 
 var canvas = _interopRequireWildcard(_canvas);
+
+var _game = __webpack_require__(7);
+
+var game = _interopRequireWildcard(_game);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -265,8 +375,8 @@ var Socket = function () {
             });
 
             this.socket.on("end", function (data) {
-                console.log(data);
-                canvas.drawText("Game Over...");
+                console.log("end:" + data);
+                game.restart(_this, "Arne");
             });
 
             this.socket.on("treat", function (data) {
@@ -287,50 +397,7 @@ var Socket = function () {
 exports.default = Socket;
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.addMessage = addMessage;
-exports.checkNickname = checkNickname;
-exports.checkChat = checkChat;
-function addMessage(author, message, color, dt) {
-    content.innerHTML = content.innerHTML + ('<p><span style="color:' + color + '">' + author + '</span> @ ' + +(dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':' + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes()) + ': ' + message + '</p>');
-    content.scrollTop = content.scrollHeight;
-}
-
-function checkNickname(userName, socket) {
-
-    return new Promise(function (ok, nok) {
-        var regex = new RegExp("^[a-zA-Z0-9_]{1,12}$");
-
-        if (!regex.test(userName)) {
-            nok("Only alphanumeric characters allowed!");
-        } else {
-            socket.send("username", userName);
-            ok(userName);
-        }
-    });
-}
-
-function checkChat(socket, userName) {
-    setInterval(function () {
-        console.log(socket.socket.io.readyState);
-        if (socket.socket.io.readyState != "open") {
-            document.querySelector("#status").innerHTML = 'Error';
-            document.querySelector("#input").disabled = true;
-            document.querySelector("#input").value = "Connection lost...";
-        }
-    }, 1000);
-}
-
-/***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -354,73 +421,7 @@ function show(players, bool) {
 }
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.drawText = drawText;
-exports.drawSnakes = drawSnakes;
-function drawText(tekst) {
-    var gameCanvas = document.querySelector("#theGame");
-    var ctx = gameCanvas.getContext("2d");
-    ctx.canvas.width = gameCanvas.clientWidth;
-    ctx.canvas.height = gameCanvas.clientHeight;
-    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-    ctx.fillStyle = "#FFF";
-    ctx.font = "2em Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    ctx.fillText(tekst, gameCanvas.width / 2, gameCanvas.height / 2);
-}
-function drawSnakes(players, treat) {
-    var gameCanvas = document.querySelector("#theGame");
-    var ctx = gameCanvas.getContext("2d");
-    var factor = gameCanvas.clientWidth / 100;
-    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
-    for (var i = 0; i < players.length; i++) {
-        var color = players[i].color;
-        var snake = players[i].snake.location;
-        ctx.fillStyle = color;
-        for (var y = 0; y < snake.length; y++) {
-            var drawX = void 0,
-                drawY = void 0;
-            drawX = snake[y].x * factor + factor / 2;
-            drawY = snake[y].y * factor + factor / 2;
-            ctx.beginPath();
-            ctx.arc(drawX, drawY, factor / 2, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.closePath();
-            //console.log("drawX: " + drawX);
-            //console.log("drawY: ", drawY);
-            //console.log("y: " + y);
-        }
-    }
-
-    if (treat != 0) {
-        //console.log("tekenen");
-        ctx.fillStyle = treat.color;
-        ctx.beginPath();
-        ctx.arc(treat.pos.x * factor + factor / 2, treat.pos.y * factor + factor / 2, factor / 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.closePath();
-    }
-}
-
-/***/ }),
 /* 7 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 8 */,
-/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -430,8 +431,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.start = start;
+exports.restart = restart;
+exports.reJoinGame = reJoinGame;
 
-var _canvas = __webpack_require__(6);
+var _canvas = __webpack_require__(1);
 
 var canvas = _interopRequireWildcard(_canvas);
 
@@ -446,6 +449,31 @@ function start(userName) {
     document.querySelector("#input").focus();
     canvas.drawText("Waiting on other players...");
 };
+
+function restart(socket, userName) {
+    var counter = 6;
+    var rejoin = setInterval(function () {
+        if (counter == 6) {
+            canvas.drawText("Game Over...");
+        } else if (counter == 0) {
+            reJoinGame(socket, userName);
+            clearInterval(rejoin);
+        } else {
+            canvas.drawText("Rejoining in " + counter + " seconds");
+        }
+        counter--;
+    }, 1000);
+}
+
+function reJoinGame(socket, userName) {
+    socket.send("username", userName);
+}
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

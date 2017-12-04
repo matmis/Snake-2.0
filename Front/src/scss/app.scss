@@ -11,6 +11,7 @@ body{
     main{
         display: flex;
         align-items: flex-start;
+        justify-content: space-between;
 
 .login-screen{
     display:flex;
@@ -160,6 +161,7 @@ body{
 }
 
 .players{
+    width: 20%;
     display: flex; 
     flex-flow: column;
     justify-content: flex-start;

@@ -6,7 +6,8 @@
     background-color: #161c22; }
     html body main {
       display: flex;
-      align-items: flex-start; }
+      align-items: flex-start;
+      justify-content: space-between; }
       html body main .login-screen {
         display: flex;
         justify-content: center;
@@ -113,6 +114,7 @@
         background-color: black;
         margin: 15px 15px 15px 15px; }
       html body main .players {
+        width: 20%;
         display: flex;
         flex-flow: column;
         justify-content: flex-start;

@@ -31,7 +31,7 @@ export function checkNickname(userName, socket){
 
 export function checkChat(socket, userName){
             setInterval(()=> {
-                console.log(socket.socket.io.readyState);
+                //console.log(socket.socket.io.readyState);
                 if (socket.socket.io.readyState != "open") {
                     document.querySelector("#status").innerHTML = ('Error');
                     document.querySelector("#input").disabled = true;
