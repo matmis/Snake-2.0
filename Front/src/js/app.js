@@ -73,7 +73,10 @@ const fetchElements = () =>{
 }
 
 const login = ()=>{
-    chat.checkNickname(txtUser.value, socket).then(game.start, loginError);
+    chat.checkNickname(txtUser.value, socket).then(()=>{
+        socket.setUserName(txtUser.value);
+        game.start(txtUser.value);
+    }, loginError);
     chat.checkChat(socket, txtUser.value);
 }
 

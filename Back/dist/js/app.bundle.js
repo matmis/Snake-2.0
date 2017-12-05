@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -158,9 +158,9 @@ function drawSnakes(players, treat) {
     if (treat != 0) {
         //console.log("tekenen");
         ctx.fillStyle = treat.color;
-        console.log("treatje");
+        //console.log("treatje")
         for (var _i = 0; _i < treat.treats.length; _i++) {
-            console.log("teat " + _i);
+            //console.log("teat " + i);
             ctx.beginPath();
             ctx.arc(treat.treats[_i].x * factor + factor / 2, treat.treats[_i].y * factor + factor / 2, factor / 2, 0, 2 * Math.PI);
             ctx.fill();
@@ -173,22 +173,73 @@ function drawSnakes(players, treat) {
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(3);
-module.exports = __webpack_require__(8);
+"use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.start = start;
+exports.restart = restart;
+exports.reJoinGame = reJoinGame;
+
+var _canvas = __webpack_require__(1);
+
+var canvas = _interopRequireWildcard(_canvas);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function start(userName) {
+    document.querySelector(".login-screen").style.visibility = "hidden";
+    document.querySelector(".chat").style.visibility = "visible";
+    document.querySelector(".game").style.visibility = "visible";
+    document.querySelector(".players").style.visibility = "visible";
+    document.querySelector("#status").innerHTML = userName;
+    document.querySelector("#input").focus();
+    canvas.drawText("Waiting on other players...");
+};
+
+function restart(socket, userName) {
+    var counter = 6;
+    var rejoin = setInterval(function () {
+        if (counter == 6) {
+            canvas.drawText("Game Over...");
+        } else if (counter == 0) {
+            reJoinGame(socket, userName);
+            clearInterval(rejoin);
+        } else {
+            canvas.drawText("Rejoining in " + counter + " seconds");
+        }
+        counter--;
+    }, 1000);
+}
+
+function reJoinGame(socket, userName) {
+    socket.setUpdate(true);
+    socket.send("username", userName);
+    canvas.drawText("Waiting on other players...");
+}
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(4);
+module.exports = __webpack_require__(8);
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
-var _layout = __webpack_require__(4);
+var _layout = __webpack_require__(5);
 
 var layout = _interopRequireWildcard(_layout);
 
-var _Socket = __webpack_require__(5);
+var _Socket = __webpack_require__(6);
 
 var _Socket2 = _interopRequireDefault(_Socket);
 
@@ -196,7 +247,7 @@ var _chat = __webpack_require__(0);
 
 var chat = _interopRequireWildcard(_chat);
 
-var _game = __webpack_require__(7);
+var _game = __webpack_require__(2);
 
 var game = _interopRequireWildcard(_game);
 
@@ -267,7 +318,10 @@ var fetchElements = function fetchElements() {
 };
 
 var login = function login() {
-    chat.checkNickname(txtUser.value, socket).then(game.start, loginError);
+    chat.checkNickname(txtUser.value, socket).then(function () {
+        socket.setUserName(txtUser.value);
+        game.start(txtUser.value);
+    }, loginError);
     chat.checkChat(socket, txtUser.value);
 };
 
@@ -278,7 +332,7 @@ var loginError = function loginError(error) {
 init();
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -309,7 +363,7 @@ function positionElements() {
 }
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -325,7 +379,7 @@ var _chat = __webpack_require__(0);
 
 var chat = _interopRequireWildcard(_chat);
 
-var _score = __webpack_require__(6);
+var _score = __webpack_require__(7);
 
 var score = _interopRequireWildcard(_score);
 
@@ -333,7 +387,7 @@ var _canvas = __webpack_require__(1);
 
 var canvas = _interopRequireWildcard(_canvas);
 
-var _game = __webpack_require__(7);
+var _game = __webpack_require__(2);
 
 var game = _interopRequireWildcard(_game);
 
@@ -348,9 +402,21 @@ var Socket = function () {
         this.socket = io.connect(location.protocol + "//" + location.host);
         this.socketListener();
         this.treat = 0;
+        this.userName = "";
+        this.update = true;
     }
 
     _createClass(Socket, [{
+        key: 'setUserName',
+        value: function setUserName(str) {
+            this.userName = str;
+        }
+    }, {
+        key: 'setUpdate',
+        value: function setUpdate(bool) {
+            this.update = bool;
+        }
+    }, {
         key: 'socketListener',
         value: function socketListener() {
             var _this = this;
@@ -370,18 +436,27 @@ var Socket = function () {
                 console.log("update: ", data);
                 var players = data;
                 console.log(players);
-                canvas.drawSnakes(players, _this.treat);
-                score.show(players, true);
+                if (_this.update) {
+                    canvas.drawSnakes(players, _this.treat);
+                    score.show(players, true);
+                }
             });
 
             this.socket.on("end", function (data) {
                 console.log("end:" + data);
-                game.restart(_this, "Arne");
+                canvas.drawText("Game Over...");
             });
 
             this.socket.on("treat", function (data) {
                 console.log("treat: ", data);
                 _this.treat = data;
+            });
+            this.socket.on("death", function (data) {
+                console.log("death: ", data);
+                if (data.name == _this.userName) {
+                    _this.update = false;
+                    game.restart(_this, _this.userName);
+                }
             });
         }
     }, {
@@ -397,7 +472,7 @@ var Socket = function () {
 exports.default = Socket;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -418,55 +493,6 @@ function show(players, bool) {
     }
     document.querySelector(".players").innerHTML = bobTheHtmlBuilder;
     console.log("Weggeschreven");
-}
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.start = start;
-exports.restart = restart;
-exports.reJoinGame = reJoinGame;
-
-var _canvas = __webpack_require__(1);
-
-var canvas = _interopRequireWildcard(_canvas);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function start(userName) {
-    document.querySelector(".login-screen").style.visibility = "hidden";
-    document.querySelector(".chat").style.visibility = "visible";
-    document.querySelector(".game").style.visibility = "visible";
-    document.querySelector(".players").style.visibility = "visible";
-    document.querySelector("#status").innerHTML = userName;
-    document.querySelector("#input").focus();
-    canvas.drawText("Waiting on other players...");
-};
-
-function restart(socket, userName) {
-    var counter = 6;
-    var rejoin = setInterval(function () {
-        if (counter == 6) {
-            canvas.drawText("Game Over...");
-        } else if (counter == 0) {
-            reJoinGame(socket, userName);
-            clearInterval(rejoin);
-        } else {
-            canvas.drawText("Rejoining in " + counter + " seconds");
-        }
-        counter--;
-    }, 1000);
-}
-
-function reJoinGame(socket, userName) {
-    socket.send("username", userName);
 }
 
 /***/ }),

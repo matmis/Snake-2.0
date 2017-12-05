@@ -82,6 +82,7 @@ let ws = (socketio) => {
     CreateChatMsg(player.name, player.color, player.name + " has died in action", (msg) => {
       io.local.emit("message", msg);
     });
+	io.local.emit("death", player);
   });
 
   const BroadCastChat = (socket, message) => {
