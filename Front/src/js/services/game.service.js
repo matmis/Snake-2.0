@@ -2,6 +2,7 @@ import * as canvas from './canvas.service';
 
 export function start(userName){
     document.querySelector(".login-screen").style.visibility = "hidden";
+    document.querySelector("footer").style.visibility = "visible";
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
     document.querySelector(".players").style.visibility = "visible";

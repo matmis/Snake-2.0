@@ -192,6 +192,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function start(userName) {
     document.querySelector(".login-screen").style.visibility = "hidden";
+    document.querySelector("footer").style.visibility = "visible";
     document.querySelector(".chat").style.visibility = "visible";
     document.querySelector(".game").style.visibility = "visible";
     document.querySelector(".players").style.visibility = "visible";
@@ -349,10 +350,20 @@ function positionElements() {
     //console.log("width: ",window.screen.availWidth);
     //console.log("height: ",window.screen.availHeight);
     var width = 0;
-    if (window.innerWidth < window.innerHeight) {
-        width = 20;
+    if (window.innerWidth <= window.innerHeight + 300) {
+        //basseren op breedte
+        if (window.innerWidth >= 850) {
+            width = window.innerWidth - 300 - 25 - 15 - 15 - 20 - 15;
+        } else {
+            if (window.innerHeight > window.innerWidth) {
+                width = window.innerWidth - 50;
+            } else {
+                width = window.innerHeight - 25 - 15 - 15 - 20 - 15; //margins en borders en footer
+            }
+        }
     } else {
-        width = window.innerHeight - 25 - 15 - 15 - 20 - 15;
+        //basseren op hoogte
+        width = window.innerHeight - 25 - 15 - 15 - 20 - 15; //margins en borders en footer
     }
 
     //hooghte en breedte aanpassen van het gameCanvas
@@ -361,7 +372,13 @@ function positionElements() {
     //console.log("width: ", width);
 
     //De chatbox juist positioneren
-    document.querySelector(".chat").style.height = document.querySelector(".game").clientHeight + "px";
+    var height = document.querySelector(".game").clientHeight;
+    document.querySelector(".chat").style.height = height + "px";
+    if (window.innerWidth > 950) {
+        document.querySelector("#content").style.height = height - 350 + "px";
+    } else {
+        document.querySelector("#content").style.height = height - 200 + "px";
+    }
 }
 
 /***/ }),
@@ -486,10 +503,11 @@ Object.defineProperty(exports, "__esModule", {
 exports.show = show;
 function show(players, bool) {
     var bobTheHtmlBuilder = "";
+
     if (bool) {
         players.forEach(function (player) {
             bobTheHtmlBuilder += "<div><div ><div style=\"background-color: " + player.color + "\"></div><p>" + player.name + "</p></div><p>" + player.score + "</p></div>";
-        }, this);
+        });
     } else {
         bobTheHtmlBuilder += "<div><div ><div style=\"background-color: " + players.color + "\"></div><p>" + players.name + "</p></div><p>" + players.score + "</p></div>";
     }

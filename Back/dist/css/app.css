@@ -28,10 +28,16 @@
             color: darkgreen; }
             html body main .login-screen .login h1 span {
               color: darkorange; }
+            @media screen and (max-width: 450px) {
+              html body main .login-screen .login h1 {
+                font-size: 5rem; } }
           html body main .login-screen .login p {
             margin-top: 0 px;
             font-size: 1.2em;
             color: white; }
+            @media screen and (max-width: 450px) {
+              html body main .login-screen .login p {
+                font-size: 0.75rem; } }
           html body main .login-screen .login #txtUser {
             margin: 15px;
             display: inline-block;
@@ -60,6 +66,9 @@
         display: flex;
         flex-flow: column;
         justify-content: space-between; }
+        @media screen and (max-width: 850px) {
+          html body main .chat {
+            display: none; } }
         html body main .chat h1 {
           font-family: 'Niconne', cursive;
           font-size: 4rem;
@@ -68,6 +77,9 @@
           text-align: center; }
           html body main .chat h1 span {
             color: darkorange; }
+          @media screen and (max-width: 950px) {
+            html body main .chat h1 {
+              font-size: 2em; } }
         html body main .chat #chatbox #content {
           padding: 5px;
           background: #101010;
@@ -76,7 +88,6 @@
           color: white;
           margin-top: 10px;
           word-wrap: break-word;
-          height: 500px;
           width: calc(100%-10px); }
           html body main .chat #chatbox #content::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -119,12 +130,16 @@
         flex-flow: column;
         justify-content: flex-start;
         margin-top: 15px; }
+        @media screen and (max-width: 850px) {
+          html body main .players {
+            display: none; } }
         html body main .players div {
           margin-top: 5px;
           display: flex;
           flex-flow: row;
           align-items: center;
-          width: 200px; }
+          width: 100%;
+          max-width: 200px; }
           html body main .players div div {
             display: flex;
             flex-flow: row;
@@ -150,3 +165,6 @@
       font-size: 1.2em;
       height: 25px;
       margin-bottom: 15px; }
+      @media screen and (max-width: 350px) {
+        html body footer {
+          font-size: 0.75em; } }

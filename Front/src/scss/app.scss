@@ -14,6 +14,7 @@ body{
         justify-content: space-between;
 
 .login-screen{
+
     display:flex;
     justify-content: center;
     align-items: center;
@@ -36,12 +37,18 @@ body{
             span{
                 color: darkorange;
             }
+            @media screen and (max-width: 450px) {
+                font-size: 5rem;
+            }
+
         }
         p{
             margin-top: 0 px;
             font-size: 1.2em;
             color: white;
-
+            @media screen and (max-width: 450px) {
+                font-size: 0.75rem;
+            }
         }
         #txtUser{
             margin: 15px;
@@ -76,8 +83,10 @@ body{
 }
 
 .chat{
+    @media screen and (max-width: 850px) {
+        display: none;
+    }
     width: 20%;
-
     display: flex;
     flex-flow: column;
     justify-content: space-between;
@@ -90,6 +99,9 @@ body{
             color: darkorange;
         }
         text-align: center;
+        @media screen and (max-width: 950px) {
+            font-size: 2em;
+        }
     }
     #chatbox{
         
@@ -101,7 +113,6 @@ body{
         color: white;
         margin-top:10px; 
         word-wrap: break-word;
-        height: 500px;
         width: calc(100%-10px);
         &::-webkit-scrollbar-track
         {
@@ -161,6 +172,9 @@ body{
 }
 
 .players{
+    @media screen and (max-width: 850px) {
+        display: none;
+    }
     width: 20%;
     display: flex; 
     flex-flow: column;
@@ -171,7 +185,8 @@ body{
         display: flex;
         flex-flow: row;
         align-items: center;
-        width: 200px;
+        width: 100%;
+        max-width: 200px;
 
 
     div{
@@ -205,6 +220,9 @@ body{
 }
 
 footer{
+    @media screen and (max-width: 350px) {
+        font-size: 0.75em;
+    }
     color: white;
     text-align: center;
     font-size: 1.2em;
