@@ -17,6 +17,7 @@ export function checkNickname(userName, socket){
             }
             else{
                 socket.send("username", userName);
+                socket.send("treat", true);
                 ok(userName);
             }
 

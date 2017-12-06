@@ -34,5 +34,6 @@ export function restart(socket, userName){
 export function reJoinGame(socket, userName){
     socket.setUpdate(true);
     socket.send("username", userName);
+    socket.send("treat", true);
     canvas.drawText("Waiting on other players...");
 }

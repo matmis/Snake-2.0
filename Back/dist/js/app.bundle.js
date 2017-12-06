@@ -90,6 +90,7 @@ function checkNickname(userName, socket) {
             nok("Only alphanumeric characters allowed!");
         } else {
             socket.send("username", userName);
+            socket.send("treat", true);
             ok(userName);
         }
     });
@@ -217,6 +218,7 @@ function restart(socket, userName) {
 function reJoinGame(socket, userName) {
     socket.setUpdate(true);
     socket.send("username", userName);
+    socket.send("treat", true);
     canvas.drawText("Waiting on other players...");
 }
 
