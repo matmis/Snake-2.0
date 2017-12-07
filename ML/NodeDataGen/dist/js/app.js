@@ -47,7 +47,7 @@ function DrawCanvas(snake, treat){
     y = loc.y * 10;
     console.log(loc);
     if(i === 0){
-      ctx.fillStyle = "#FFFF00";
+      ctx.fillStyle = "#0000FF";
     }else{
       ctx.fillStyle = "#FF0000";
     }

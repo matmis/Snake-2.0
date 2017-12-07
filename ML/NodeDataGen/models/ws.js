@@ -25,6 +25,18 @@ module.exports = (socketio) => {
   let moveSnake = (dir, snake, treat, cb) => {
     snake.changeDirection(dir, () => {
       snake.move(() => {
+        if(snake.location[0].x == 20){
+          snake.location[0].x = 0;
+        }
+        if(snake.location[0].x == -1){
+          snake.location[0].x = 19;
+        }
+        if(snake.location[0].y == 20){
+          snake.location[0].y = 0;
+        }
+        if(snake.location[0].y == -1){
+          snake.location[0].y = 19;
+        }
         snake.checkCollisionWithSelf((col) => {
           if(col){
             console.log("dood");
