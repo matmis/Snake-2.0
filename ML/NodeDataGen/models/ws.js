@@ -6,7 +6,7 @@ module.exports = (socketio) => {
   let io = socketio;
   let snake = new Snake();
   let treat = new Treat();
-  
+
   io.on("connection", (socket) => {
 
     io.local.emit("treat", treat);
@@ -64,8 +64,8 @@ module.exports = (socketio) => {
               snake.Grow();
             }
           }
-          //io.local.emit("snake", snake);
-          //io.local.emit("treat", treat);
+          io.local.emit("snake", snake);
+          io.local.emit("treat", treat);
 
           requestmove(() => {
             snake.checkSides((bl,br,ba,bb) => {
