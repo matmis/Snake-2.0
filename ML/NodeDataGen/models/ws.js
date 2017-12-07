@@ -51,7 +51,7 @@ module.exports = (socketio) => {
           io.local.emit("treat", treat);
 
           snake.checkSides((bl,br,ba,bb) => {
-            let csvstring =snake.direction + ";" + treat.x + ";" + treat.y + ";" + snake.location[0].x + ";" + snake.location[0].y + ";" + bl + ";" + br + ";" + ba + ";" + bb + ";\n";
+            let csvstring =snake.direction + "," + treat.x + "," + treat.y + "," + snake.location[0].x + "," + snake.location[0].y + "," + bl + "," + br + "," + ba + "," + bb + "\n";
             csvstring = csvstring.replace(new RegExp(escapeRegExp("false"), 'g'), 0).replace(new RegExp(escapeRegExp("true"), 'g'),1);
             let ws = fs.createWriteStream("data.csv", {"flags": "a"});
             ws.write(csvstring);
