@@ -6,7 +6,7 @@ move_score_min = -0.2
 move_score_max = +0.2
 
 width = 20
-(x,y) = (20,20)
+(x,y) = (5,5)
 
 #up down left right ==> zelfde als in onze Backend
 actions = [0,1,2,3]
@@ -18,7 +18,7 @@ restart = False
 move_reward = -0.04
 
 treat = None
-specials = [(randint(0,x),randint(0,y),"treat",2)]
+specials = [(randint(0,x-1),randint(0,y-1),"treat",2)]
 
 cell_scores = {}
 
@@ -31,7 +31,8 @@ render_grid()
 
 def move_treat():
 	global treat, specials, x, y
-	specials[0] = (randint(0,x),randint(0,y),"treat",1)
+	specials[0] = (randint(0,x-1),randint(0,y-1),"treat",1)
+	#specials[0] = (randint(0,4),randint(0,4),"treat",1)
 	for (i,j,c,w) in specials:
 		board.coords(treat, i*width, j*width, (i+1)*width, (j+1)*width)
 
@@ -41,7 +42,7 @@ def try_move(dx, dy):
 	new_y = snake[1] + dy
 	score += move_reward
 	print(score)
-	print("new_x", new_x, " new_y", new_y, " x", x, " y", y)
+	#print("new_x", new_x, " new_y", new_y, " x", x, " y", y)
 	if(new_x >= 0) and (new_x < x) and (new_y >= 0) and (new_y < y):
 		board.coords(me, new_x*width, new_y * width, (new_x+1)*width, (new_y+1)*width)
 		snake = (new_x, new_y)
