@@ -20,6 +20,16 @@ module.exports = (socketio) => {
       });
     });
 
+    socket.on("requestmove", () => {
+      let req = "";
+      req += treat.x + "," + treat.y + "," + snake.location[0].x + "," + snake.location[0].y + ",";
+      snake.checkSides((bl, br, ba,bb) => {
+        req += bl + "," + br + "," + va + "," + bb;
+        req = req.replace(new RegExp(escapeRegExp("false"), 'g'), 0).replace(new RegExp(escapeRegExp("true"), 'g'),1);
+        io.local.emit("requestmoveanswer", req);
+      });
+    });
+
   });
 
   let moveSnake = (dir, snake, treat, cb) => {
