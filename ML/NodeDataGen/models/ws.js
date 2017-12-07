@@ -14,6 +14,7 @@ module.exports = (socketio) => {
     io.local.emit("snake", snake);
 
     socket.on("move", (data) => {
+      console.log(data);
       moveSnake(data, snake, treat, (s, t) => {
         snake = s;
         treat = t;
