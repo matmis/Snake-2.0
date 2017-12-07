@@ -1,5 +1,5 @@
 module.exports = {
   PROJECT_DIR: __dirname,
-  HOSTNAME: "127.0.0.1",
+  HOSTNAME: "172.30.248.155",
   PORT: 5000
 };
