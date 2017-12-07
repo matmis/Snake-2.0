@@ -21,16 +21,23 @@ module.exports = (socketio) => {
     });
 
     socket.on("requestmove", () => {
-      let req = "";
-      req += treat.x + "," + treat.y + "," + snake.location[0].x + "," + snake.location[0].y + ",";
-      snake.checkSides((bl, br, ba,bb) => {
-        req += bl + "," + br + "," + ba + "," + bb;
-        req = req.replace(new RegExp(escapeRegExp("false"), 'g'), 0).replace(new RegExp(escapeRegExp("true"), 'g'),1);
-        io.local.emit("requestmoveanswer", req);
+      requestmove(() => {
+
       });
     });
 
   });
+
+  let requestmove = (cb) => {
+    let req = "";
+    req += treat.x + "," + treat.y + "," + snake.location[0].x + "," + snake.location[0].y + ",";
+    snake.checkSides((bl, br, ba,bb) => {
+      req += bl + "," + br + "," + ba + "," + bb;
+      req = req.replace(new RegExp(escapeRegExp("false"), 'g'), 0).replace(new RegExp(escapeRegExp("true"), 'g'),1);
+      io.local.emit("requestmoveanswer", req);
+    });
+    cb();
+  };
 
   let moveSnake = (dir, snake, treat, cb) => {
     snake.changeDirection(dir, () => {
@@ -57,16 +64,18 @@ module.exports = (socketio) => {
               snake.Grow();
             }
           }
-          io.local.emit("snake", snake);
-          io.local.emit("treat", treat);
+          //io.local.emit("snake", snake);
+          //io.local.emit("treat", treat);
 
-          snake.checkSides((bl,br,ba,bb) => {
-            let csvstring =snake.direction + "," + treat.x + "," + treat.y + "," + snake.location[0].x + "," + snake.location[0].y + "," + bl + "," + br + "," + ba + "," + bb + "\n";
-            csvstring = csvstring.replace(new RegExp(escapeRegExp("false"), 'g'), 0).replace(new RegExp(escapeRegExp("true"), 'g'),1);
-            let ws = fs.createWriteStream("data.csv", {"flags": "a"});
-            ws.write(csvstring);
-            ws.end();
-            cb(snake, treat);
+          requestmove(() => {
+            snake.checkSides((bl,br,ba,bb) => {
+              //let csvstring =snake.direction + "," + treat.x + "," + treat.y + "," + snake.location[0].x + "," + snake.location[0].y + "," + bl + "," + br + "," + ba + "," + bb + "\n";
+              //csvstring = csvstring.replace(new RegExp(escapeRegExp("false"), 'g'), 0).replace(new RegExp(escapeRegExp("true"), 'g'),1);
+              //let ws = fs.createWriteStream("data.csv", {"flags": "a"});
+              //ws.write(csvstring);
+              //ws.end();
+              cb(snake, treat);
+            });
           });
         });
       });
