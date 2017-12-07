@@ -4,11 +4,10 @@ const fs = require("fs");
 
 module.exports = (socketio) => {
   let io = socketio;
-
+  let snake = new Snake();
+  let treat = new Treat();
+  
   io.on("connection", (socket) => {
-
-    let snake = new Snake();
-    let treat = new Treat();
 
     io.local.emit("treat", treat);
     io.local.emit("snake", snake);
